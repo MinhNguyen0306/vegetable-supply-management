@@ -4,7 +4,9 @@ import com.example.vegetablemanagementsupplybackend.DTO.OrderDeliveryDto;
 import com.example.vegetablemanagementsupplybackend.Entity.OrderDelivery;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class OrderDeliveryConverter {
     @Autowired
     private ModelMapper modelMapper;

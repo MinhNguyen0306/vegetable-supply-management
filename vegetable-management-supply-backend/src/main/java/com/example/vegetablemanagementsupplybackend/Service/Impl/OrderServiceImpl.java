@@ -13,6 +13,7 @@ import com.example.vegetablemanagementsupplybackend.Repository.MartRepository;
 import com.example.vegetablemanagementsupplybackend.Repository.OrderItemRepository;
 import com.example.vegetablemanagementsupplybackend.Repository.OrderRepository;
 import com.example.vegetablemanagementsupplybackend.Service.OrderService;
+import lombok.RequiredArgsConstructor;
 import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -27,6 +28,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
     @Autowired
     private OrderRepository orderRepository;
@@ -34,7 +36,7 @@ public class OrderServiceImpl implements OrderService {
     private OrderItemRepository orderItemRepository;
     @Autowired
     private MartRepository martRepository;
-    private OrderConverter converter;
+    private final OrderConverter converter;
 
     @Override
     public OrderDto createOrder(String martId, OrderDto orderDto) {
@@ -65,7 +67,7 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order", "Id", orderId));
         OrderStatusEnum orderStatusEnum = order.getOrderStatus();
-        if(orderStatusEnum.equals(OrderStatusEnum.WAIT_RESOLVE)) {
+        if(orderStatusEnum.equals(OrderStatusEnum.PENDING)) {
             order.setOrderStatus(OrderStatusEnum.REJECT);
             return new ChangeStatusResponse("success",
                     orderStatusEnum.name(), order.getOrderStatus().name());
@@ -79,7 +81,7 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order", "Id", orderId));
         OrderStatusEnum orderStatusEnum = order.getOrderStatus();
-        if(orderStatusEnum.equals(OrderStatusEnum.WAIT_RESOLVE)) {
+        if(orderStatusEnum.equals(OrderStatusEnum.PENDING)) {
             order.setOrderStatus(OrderStatusEnum.CANCEL);
             return new ChangeStatusResponse("success",
                     orderStatusEnum.name(), order.getOrderStatus().name());

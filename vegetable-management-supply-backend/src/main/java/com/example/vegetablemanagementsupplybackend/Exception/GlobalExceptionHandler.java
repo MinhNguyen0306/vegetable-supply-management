@@ -14,20 +14,20 @@ import java.util.Map;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<?> handleException(
+            Exception exception, WebRequest request) {
+        ErrorDetail errorDetail = new ErrorDetail(
+                new Date(), exception.getMessage(), request.getContextPath(), request.getDescription(false));
+        return new ResponseEntity(errorDetail, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<?> handleResourceNotFoundException(
             ResourceNotFoundException exception, WebRequest request) {
         ErrorDetail errorDetail = new ErrorDetail(
                 new Date(), exception.getMessage(), request.getContextPath(), request.getDescription(false));
         return new ResponseEntity(errorDetail, HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<?> handleException(
-            ResourceNotFoundException exception, WebRequest request) {
-        ErrorDetail errorDetail = new ErrorDetail(
-                new Date(), exception.getMessage(), request.getContextPath(), request.getDescription(false));
-        return new ResponseEntity(errorDetail, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -39,5 +39,12 @@ public class GlobalExceptionHandler {
             resp.put(fieldName, message);
         });
         return new ResponseEntity<Map<String, String>>(resp, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(ApiException.class)
+    public ResponseEntity<?> handleApiException(ApiException exception, WebRequest request) {
+        ErrorDetail errorDetail = new ErrorDetail(
+                new Date(), exception.getMessage(), request.getContextPath(), request.getDescription(false));
+        return new ResponseEntity(errorDetail, HttpStatus.BAD_REQUEST);
     }
 }

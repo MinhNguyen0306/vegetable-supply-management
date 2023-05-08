@@ -1,5 +1,5 @@
 package com.example.vegetablemanagementsupplybackend.Enum;
 
 public enum ContractStatusEnum {
-    EFFECTIVE, NON_EFFECTIVE
+    PENDING, RESOLVED, REJECT, EFFECTIVE, NON_EFFECTIVE
 }

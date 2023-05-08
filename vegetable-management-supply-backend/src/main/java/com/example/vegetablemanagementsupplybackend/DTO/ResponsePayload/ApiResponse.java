@@ -1,4 +1,4 @@
-package com.example.vegetablemanagementsupplybackend.Config;
+package com.example.vegetablemanagementsupplybackend.DTO.ResponsePayload;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

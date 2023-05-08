@@ -1,5 +1,5 @@
 package com.example.vegetablemanagementsupplybackend.Enum;
 
 public enum OrderStatusEnum {
-    WAIT_RESOLVE, RESOLVE, CANCEL, REJECT, DONE
+    PENDING, RESOLVE, REJECT, CANCEL, DONE
 }

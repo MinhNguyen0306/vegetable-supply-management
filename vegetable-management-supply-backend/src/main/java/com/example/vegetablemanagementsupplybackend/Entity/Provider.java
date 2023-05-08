@@ -1,5 +1,6 @@
 package com.example.vegetablemanagementsupplybackend.Entity;
 
+import com.example.vegetablemanagementsupplybackend.Enum.ProviderStatusEnum;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -9,7 +10,6 @@ import org.hibernate.annotations.GenericGenerator;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "providers")
@@ -29,6 +29,12 @@ public class Provider {
 
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date yearActive;
+
+    @Enumerated(EnumType.STRING)
+    private ProviderStatusEnum status;
+
+    @OneToOne(mappedBy = "provider")
+    private User user;
 
     @OneToMany(mappedBy = "provider", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Unit> units;

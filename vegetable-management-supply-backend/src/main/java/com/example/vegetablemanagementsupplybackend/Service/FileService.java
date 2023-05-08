@@ -9,4 +9,7 @@ import java.io.InputStream;
 public interface FileService {
     String uploadFile(String path, MultipartFile file) throws IOException;
     InputStream getResourceFile(String path, String fileName) throws IOException;
+
+    // Upload on cloudinary
+    String uploadFileCloudinary(MultipartFile multipartFile) throws IOException;
 }

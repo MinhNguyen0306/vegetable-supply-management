@@ -23,6 +23,9 @@ public class Mart {
     private String martName;
     private String faxCode;
 
+    @OneToOne(mappedBy = "mart")
+    private User user;
+
     @JsonBackReference
     @OneToMany(mappedBy = "mart", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Order> orders;

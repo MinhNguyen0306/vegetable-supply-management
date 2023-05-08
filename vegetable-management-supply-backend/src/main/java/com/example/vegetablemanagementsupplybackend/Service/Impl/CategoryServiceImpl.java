@@ -1,21 +1,28 @@
 package com.example.vegetablemanagementsupplybackend.Service.Impl;
 
 import com.example.vegetablemanagementsupplybackend.Converter.CategoryConverter;
+import com.example.vegetablemanagementsupplybackend.Converter.VegetableConverter;
 import com.example.vegetablemanagementsupplybackend.DTO.CategoryDto;
+import com.example.vegetablemanagementsupplybackend.DTO.ResponsePayload.VegetableResponse;
+import com.example.vegetablemanagementsupplybackend.DTO.VegetableDto;
 import com.example.vegetablemanagementsupplybackend.Entity.Category;
+import com.example.vegetablemanagementsupplybackend.Entity.Vegetable;
 import com.example.vegetablemanagementsupplybackend.Exception.ResourceNotFoundException;
 import com.example.vegetablemanagementsupplybackend.Repository.CategoryRepository;
+import com.example.vegetablemanagementsupplybackend.Repository.VegetableRepository;
 import com.example.vegetablemanagementsupplybackend.Service.CategoryService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class CategoryServiceImpl implements CategoryService {
     @Autowired
     private CategoryRepository categoryRepository;
-    private CategoryConverter categoryConverter;
+    private final CategoryConverter categoryConverter;
 
     @Override
     public CategoryDto createCategory(CategoryDto categoryDto) {

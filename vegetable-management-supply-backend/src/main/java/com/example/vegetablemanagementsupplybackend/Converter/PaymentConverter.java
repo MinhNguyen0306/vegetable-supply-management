@@ -4,7 +4,9 @@ import com.example.vegetablemanagementsupplybackend.DTO.PaymentDto;
 import com.example.vegetablemanagementsupplybackend.Entity.Payment;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class PaymentConverter {
     @Autowired
     private ModelMapper modelMapper;

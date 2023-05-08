@@ -8,18 +8,20 @@ import com.example.vegetablemanagementsupplybackend.Exception.ResourceNotFoundEx
 import com.example.vegetablemanagementsupplybackend.Repository.ProviderRepository;
 import com.example.vegetablemanagementsupplybackend.Repository.UnitRepository;
 import com.example.vegetablemanagementsupplybackend.Service.UnitService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class UnitServiceImpl implements UnitService {
     @Autowired
     private UnitRepository unitRepository;
     @Autowired
     private ProviderRepository providerRepository;
-    private UnitConverter converter;
+    private final UnitConverter converter;
 
     @Override
     public UnitDto createUnit(String providerId, UnitDto unitDto) {
