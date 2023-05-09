@@ -1,6 +1,6 @@
 package com.example.vegetablemanagementsupplybackend.Controller;
 
-import com.example.vegetablemanagementsupplybackend.DTO.ResponsePayload.ApiResponse;
+import com.example.vegetablemanagementsupplybackend.DTO.ResponsePayload.RestApiResponse;
 import com.example.vegetablemanagementsupplybackend.DTO.CategoryDto;
 import com.example.vegetablemanagementsupplybackend.Service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,8 +44,8 @@ public class CategoryController {
     }
 
     @DeleteMapping("/category/{categoryId}")
-    public ResponseEntity<ApiResponse> deleteCategory(@PathVariable Integer categoryId) {
+    public ResponseEntity<RestApiResponse> deleteCategory(@PathVariable Integer categoryId) {
         this.categoryService.deleteCategory(categoryId);
-        return new ResponseEntity<ApiResponse>(new ApiResponse(true, "Category is deleted!"), HttpStatus.OK);
+        return new ResponseEntity<RestApiResponse>(new RestApiResponse(true, "Category is deleted!"), HttpStatus.OK);
     }
 }

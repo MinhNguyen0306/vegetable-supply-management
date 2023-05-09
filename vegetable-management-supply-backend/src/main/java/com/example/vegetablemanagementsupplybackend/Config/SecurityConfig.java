@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -16,15 +17,27 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 @Configuration
 @EnableWebSecurity
+@EnableWebMvc
 @RequiredArgsConstructor
 public class SecurityConfig {
-
+    public static final String[] PERMIT_URLS = {
+        "api/auth/**",
+        "v3/api-docs",
+        "v2/api-docs",
+        "configuration/ui",
+        "swagger-resources/**",
+        "configuration/security",
+        "swagger-ui.html",
+        "webjars/**"
+    };
     @Autowired
     private UserService userService;
 
+    private final JwtAuthenticationEntryPoint authenticationEntryPoint;
     private final JwtAuthenticationFilter jwtAuthFilter;
 
     @Bean
@@ -51,10 +64,13 @@ public class SecurityConfig {
             .csrf()
             .disable()
             .authorizeHttpRequests()
-            .requestMatchers("api/auth/**")
-            .permitAll()
+            .requestMatchers(PERMIT_URLS).permitAll()
+                .requestMatchers(HttpMethod.GET).permitAll()
             .anyRequest()
             .authenticated()
+            .and()
+            .exceptionHandling()
+            .authenticationEntryPoint(authenticationEntryPoint)
             .and()
             .sessionManagement()
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

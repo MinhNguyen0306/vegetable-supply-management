@@ -1,10 +1,15 @@
 package com.example.vegetablemanagementsupplybackend.Controller;
 
-import com.example.vegetablemanagementsupplybackend.DTO.ResponsePayload.ApiResponse;
+import com.example.vegetablemanagementsupplybackend.DTO.ResponsePayload.RestApiResponse;
 import com.example.vegetablemanagementsupplybackend.Config.AppConstants;
 import com.example.vegetablemanagementsupplybackend.DTO.ResponsePayload.VegetableResponse;
 import com.example.vegetablemanagementsupplybackend.DTO.VegetableDto;
 import com.example.vegetablemanagementsupplybackend.Service.VegetableService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,6 +25,22 @@ public class VegetableController {
     private VegetableService vegetableService;
 
     @PostMapping("/")
+    @Operation(
+        summary = "Create a vegetable",
+        description = "Provider insert a vegetable",
+        tags = {"Vegetable"}
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "201", description = "Success, new vegetable inserted.",
+            content = {
+                @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = VegetableDto.class)
+                )
+            }
+        ),
+        @ApiResponse(responseCode = "400", description = "Bad request")}
+    )
     public ResponseEntity<VegetableDto> createVegetable(
             @RequestParam(name = "providerId") String providerId,
             @RequestParam(name = "avatar")MultipartFile file,
@@ -32,14 +53,35 @@ public class VegetableController {
         return new ResponseEntity<>(createdVegetable, HttpStatus.CREATED);
     }
 
+
     @PostMapping("/{vegetableId}")
+    @Operation(
+        summary = "Update vegetable information",
+        description = "Update several info of vegetable ordinary as current price",
+        tags = {"Vegetable"}
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Update info vegetable successfully",
+            content = {
+                @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = VegetableDto.class)
+                )
+            }
+        ),
+        @ApiResponse(responseCode = "400", description = "Bad request")}
+    )
     public ResponseEntity<VegetableDto> updateVegetable(
             @PathVariable String vegetableId,
             @RequestBody VegetableDto vegetableDto
     ) {
         VegetableDto updatedVegetable = this.vegetableService.updateVegetable(vegetableId, vegetableDto);
+        if(vegetableDto == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
         return new ResponseEntity<>(updatedVegetable, HttpStatus.OK);
     }
+
 
     @GetMapping("/{vegetableId}")
     public ResponseEntity<VegetableDto> getVegetableById(@PathVariable String vegetableId) {
@@ -62,8 +104,8 @@ public class VegetableController {
     }
 
     @DeleteMapping("/{vegetableId}")
-    public ResponseEntity<ApiResponse> deleteVegetable(@PathVariable String vegetableId) {
+    public ResponseEntity<RestApiResponse> deleteVegetable(@PathVariable String vegetableId) {
         this.vegetableService.deleteVegetable(vegetableId);
-        return new ResponseEntity<ApiResponse>(new ApiResponse(true, "Delete vegetable success!"), HttpStatus.OK);
+        return new ResponseEntity<RestApiResponse>(new RestApiResponse(true, "Delete vegetable success!"), HttpStatus.OK);
     }
 }

@@ -3,6 +3,11 @@ package com.example.vegetablemanagementsupplybackend;
 import com.example.vegetablemanagementsupplybackend.Config.AppConstants;
 import com.example.vegetablemanagementsupplybackend.Entity.Role;
 import com.example.vegetablemanagementsupplybackend.Repository.RoleRepository;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
+import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -13,6 +18,9 @@ import org.springframework.context.annotation.Bean;
 import java.util.List;
 
 @SpringBootApplication
+@OpenAPIDefinition(info = @Info(title = "Vegetable Supply Management Api",
+		version = "1.0", description = "Vegetable Supply Management Api document"))
+@SecurityScheme(name = "vegetableApi", scheme = "basic", type = SecuritySchemeType.APIKEY, in = SecuritySchemeIn.HEADER)
 public class VegetableManagementSupplyBackendApplication implements CommandLineRunner {
 	@Autowired
 	private RoleRepository roleRepository;
