@@ -47,4 +47,12 @@ public class GlobalExceptionHandler {
                 new Date(), exception.getMessage(), request.getContextPath(), request.getDescription(false));
         return new ResponseEntity(errorDetail, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(UploadFileException.class)
+    public ResponseEntity<?>  handleUploadFileException(UploadFileException exception, WebRequest request) {
+        ErrorDetail errorDetail = new ErrorDetail(
+            new Date(), exception.getMessage(), request.getContextPath(), request.getDescription(false)
+        );
+        return new ResponseEntity<>(errorDetail, HttpStatus.BAD_REQUEST);
+    }
 }

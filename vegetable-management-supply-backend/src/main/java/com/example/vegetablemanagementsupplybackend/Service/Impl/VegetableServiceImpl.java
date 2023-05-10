@@ -1,6 +1,6 @@
 package com.example.vegetablemanagementsupplybackend.Service.Impl;
 
-import com.example.vegetablemanagementsupplybackend.Converter.MediaConverter;
+import com.example.vegetablemanagementsupplybackend.Config.AppConstants;
 import com.example.vegetablemanagementsupplybackend.Converter.VegetableConverter;
 import com.example.vegetablemanagementsupplybackend.DTO.ResponsePayload.VegetableResponse;
 import com.example.vegetablemanagementsupplybackend.DTO.VegetableDto;
@@ -9,10 +9,11 @@ import com.example.vegetablemanagementsupplybackend.Entity.Provider;
 import com.example.vegetablemanagementsupplybackend.Entity.Vegetable;
 import com.example.vegetablemanagementsupplybackend.Enum.ProviderStatusEnum;
 import com.example.vegetablemanagementsupplybackend.Exception.ResourceNotFoundException;
+import com.example.vegetablemanagementsupplybackend.Exception.UploadFileException;
 import com.example.vegetablemanagementsupplybackend.Repository.MediaRepository;
 import com.example.vegetablemanagementsupplybackend.Repository.ProviderRepository;
 import com.example.vegetablemanagementsupplybackend.Repository.VegetableRepository;
-import com.example.vegetablemanagementsupplybackend.Service.FileService;
+import com.example.vegetablemanagementsupplybackend.Service.UploadFileService;
 import com.example.vegetablemanagementsupplybackend.Service.VegetableService;
 import com.example.vegetablemanagementsupplybackend.Util.FileUtil;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,48 +43,73 @@ public class VegetableServiceImpl implements VegetableService {
     private ProviderRepository providerRepository;
 
     @Autowired
-    private FileService fileService;
+    private UploadFileService uploadFileService;
 
     private final VegetableConverter vegetableConverter;
-    private final MediaConverter mediaConverter;
     @Value("${project.image}")
     private String path;
 
     @Override
-    public VegetableDto createVegetable(String providerId, MultipartFile file, VegetableDto vegetableDto) {
+    public VegetableDto createVegetable(
+            String providerId,
+            MultipartFile[] files,
+            String uploadTo,
+            VegetableDto vegetableDto
+    ) {
+        // Lấy Provider theo id
         Provider provider = providerRepository.findById(providerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Provider", "Id", providerId));
+
+        // Convert vegetable sang vegetableDto
         Vegetable vegetable = vegetableConverter.dtoToVegetable(vegetableDto);
-        List<Vegetable> vegetables = this.vegetableRepository.findAll();
-        boolean existed = vegetables.stream().anyMatch(vegetable1 -> vegetable1 == vegetable);
+
+        // Kiểm tra xem sản phẩm đã tồn tại chưa
+        List<Vegetable> vegetables = provider.getVegetables();
+        boolean existed = vegetables.stream().anyMatch(existedVegetable -> existedVegetable == vegetable);
         if(existed) {
             return null;
         }
+
+        // Kiểm tra tài khoản provider có active không
         boolean checkProvider = provider.getStatus().equals(ProviderStatusEnum.ACTIVE);
         if(!checkProvider) {
             return null;
         }
         vegetable.setProvider(provider);
         Vegetable savedVegetable = this.vegetableRepository.save(vegetable);
-        if(file != null) {
-            try {
-                String fileName = fileService.uploadFile(path, file);
-                Optional<String> extensionOptional = FileUtil.getExtensionByStringHandling(fileName);
+
+        // Thực hiện lưu trữ ảnh của sản phẩm
+        Arrays.stream(files).forEach(file -> {
+            if(file != null) {
+                String fileName = "";
+                Media media = new Media();
+                String originalName = file.getOriginalFilename();
+                Optional<String> extensionOptional = FileUtil.getExtensionByStringHandling(originalName);
+                String mediaName = originalName.substring(0, originalName.lastIndexOf("."));
                 if(extensionOptional.isPresent()) {
                     String extension = extensionOptional.get();
-                    Media media = new Media();
-                    String originalName = file.getOriginalFilename();
-                    String mediaName = originalName.substring(0, originalName.lastIndexOf("."));
-                    media.setUrl(fileName);
-                    media.setMediaName(mediaName);
                     media.setExtension(extension);
+                    media.setMediaName(mediaName);
                     media.setVegetable(savedVegetable);
+                    try {
+                        // Chọn upload lên server
+                        if(uploadTo.equalsIgnoreCase(AppConstants.UPLOAD_SERVER)) {
+                            fileName = uploadFileService.uploadFile(path, file);
+                        }
+                        // Chọn upload lên cloudinary
+                        else {
+                            fileName = uploadFileService.uploadFileCloudinary(file);
+                        }
+                    } catch (IOException e) {
+                        throw new UploadFileException(originalName);
+                    }
+
+                    media.setUrl(fileName);
                     this.mediaRepository.save(media);
                 }
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+
             }
-        }
+        });
 
         return vegetableConverter.vegetableToDto(savedVegetable);
     }
@@ -109,10 +136,10 @@ public class VegetableServiceImpl implements VegetableService {
 
     @Override
     public VegetableResponse getAllVegetables(
-            Integer pageNumber,
-            Integer pageSize,
-            String sortBy,
-            String sortDir
+        Integer pageNumber,
+        Integer pageSize,
+        String sortBy,
+        String sortDir
     ) {
         Sort sort = sortDir.equalsIgnoreCase("asc") ?
                 Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();

@@ -1,5 +1,6 @@
 package com.example.vegetablemanagementsupplybackend.DTO;
 
+import com.example.vegetablemanagementsupplybackend.Config.AppConstants;
 import com.example.vegetablemanagementsupplybackend.Entity.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,4 +21,5 @@ public class VegetableDto {
     private Set<Certificate> certificates = new HashSet<>();
     private List<OrderItem> orderItems;
     private List<Media> medias;
+    private String uploadTo = AppConstants.UPLOAD_SERVER;
 }

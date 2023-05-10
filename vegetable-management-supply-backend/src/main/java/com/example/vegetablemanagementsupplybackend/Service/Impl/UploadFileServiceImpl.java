@@ -1,8 +1,11 @@
 package com.example.vegetablemanagementsupplybackend.Service.Impl;
 
 import com.cloudinary.Cloudinary;
-import com.example.vegetablemanagementsupplybackend.Service.FileService;
+import com.example.vegetablemanagementsupplybackend.Service.UploadFileService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -11,12 +14,18 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
 import java.util.UUID;
 
 @Service
-public class FileServiceImpl implements FileService {
+public class UploadFileServiceImpl implements UploadFileService {
+
+    @Value("${project.image}")
+    private String path;
+
+    private Path foundFile;
 
     @Autowired
     private Cloudinary cloudinary;
@@ -50,8 +59,32 @@ public class FileServiceImpl implements FileService {
     @Override
     public String uploadFileCloudinary(MultipartFile multipartFile) throws IOException {
         return cloudinary.uploader()
-                .upload(multipartFile.getBytes(), Map.of("public_id", UUID.randomUUID().toString()))
+                .upload(
+                    multipartFile.getBytes(),
+                    Map.of(
+                        "public_id", UUID.randomUUID().toString(),
+                        "resource_type", "auto"
+                    )
+                )
                 .get("url")
                 .toString();
+    }
+
+    @Override
+    public Resource loadFileAsResource(String fileName) throws IOException {
+        Path uploadDirectory = Paths.get(path);
+
+        Files.list(uploadDirectory).forEach(file -> {
+            if(file.getFileName().toString().startsWith(fileName)) {
+                foundFile = file;
+                return;
+            }
+        });
+
+        if(foundFile != null) {
+            return new UrlResource(foundFile.toUri());
+        }
+
+        return null;
     }
 }

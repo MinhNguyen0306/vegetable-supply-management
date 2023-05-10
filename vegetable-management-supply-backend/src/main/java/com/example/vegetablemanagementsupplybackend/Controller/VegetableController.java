@@ -42,11 +42,12 @@ public class VegetableController {
         @ApiResponse(responseCode = "400", description = "Bad request")}
     )
     public ResponseEntity<VegetableDto> createVegetable(
-            @RequestParam(name = "providerId") String providerId,
-            @RequestParam(name = "avatar")MultipartFile file,
-            @RequestBody VegetableDto vegetableDto
+        @RequestParam(name = "providerId") String providerId,
+        @RequestParam(name = "avatar")MultipartFile[] files,
+        @RequestParam(value = "uploadTo", defaultValue = AppConstants.UPLOAD_SERVER, required = false) String uploadTo,
+        @RequestBody VegetableDto vegetableDto
     ) {
-        VegetableDto createdVegetable = this.vegetableService.createVegetable(providerId, file, vegetableDto);
+        VegetableDto createdVegetable = this.vegetableService.createVegetable(providerId, files, uploadTo, vegetableDto);
         if(createdVegetable == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }

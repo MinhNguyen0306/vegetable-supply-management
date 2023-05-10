@@ -15,4 +15,5 @@ public interface VegetableRepository extends JpaRepository<Vegetable, String> {
 
     @Query("SELECT v FROM Vegetable v WHERE v.category.id = :categoryId")
     Page<Vegetable> getAllVegetablesByCategory(@Param(value = "categoryId") Integer categoryId, Pageable pageable);
+
 }
