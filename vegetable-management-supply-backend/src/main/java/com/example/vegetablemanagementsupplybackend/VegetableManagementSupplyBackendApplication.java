@@ -49,8 +49,7 @@ public class VegetableManagementSupplyBackendApplication implements CommandLineR
 			providerRole.setName("ROLE_PROVIDER");
 
 			List<Role> roles = List.of(adminRole, martRole, providerRole);
-			List<Role> result = this.roleRepository.saveAll(roles);
-			result.forEach(r -> System.out.println(r.getName()));
+			this.roleRepository.saveAll(roles);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

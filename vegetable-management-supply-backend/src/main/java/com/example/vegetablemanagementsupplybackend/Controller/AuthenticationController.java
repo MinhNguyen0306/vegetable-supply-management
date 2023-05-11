@@ -7,6 +7,7 @@ import com.example.vegetablemanagementsupplybackend.DTO.ResponsePayload.Authenti
 import com.example.vegetablemanagementsupplybackend.Service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,7 +24,8 @@ public class AuthenticationController {
             @RequestBody RegisterRequest request,
             @RequestParam(value = "type", defaultValue = AppConstants.MART, required = false) Integer type
     ) {
-        return ResponseEntity.ok(authenticationService.register(request, type));
+        AuthenticationResponse response = this.authenticationService.register(request, type);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @PostMapping("/login")

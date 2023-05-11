@@ -5,5 +5,6 @@ public class UploadFileException extends RuntimeException{
 
     public UploadFileException(String fileName) {
         super(String.format("File upload failed with %s", fileName));
+        this.fileName = fileName;
     }
 }

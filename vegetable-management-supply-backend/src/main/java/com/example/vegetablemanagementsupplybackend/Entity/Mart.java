@@ -1,7 +1,8 @@
 package com.example.vegetablemanagementsupplybackend.Entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
@@ -12,7 +13,7 @@ import java.util.List;
 @Entity
 @Table(name = "marts")
 @Data
-@NoArgsConstructor
+@NoArgsConstructor @AllArgsConstructor
 public class Mart {
     @Id
     @GeneratedValue(generator = "UUID")
@@ -23,10 +24,12 @@ public class Mart {
     private String martName;
     private String faxCode;
 
-    @OneToOne(mappedBy = "mart")
+    @JsonManagedReference(value = "mart-user")
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "id_user", referencedColumnName = "id_user")
     private User user;
 
-    @JsonBackReference
+    @JsonManagedReference(value = "mart-order")
     @OneToMany(mappedBy = "mart", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Order> orders;
 

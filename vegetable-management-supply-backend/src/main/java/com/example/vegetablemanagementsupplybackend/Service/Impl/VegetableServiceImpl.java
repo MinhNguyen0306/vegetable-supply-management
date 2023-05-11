@@ -4,15 +4,12 @@ import com.example.vegetablemanagementsupplybackend.Config.AppConstants;
 import com.example.vegetablemanagementsupplybackend.Converter.VegetableConverter;
 import com.example.vegetablemanagementsupplybackend.DTO.ResponsePayload.VegetableResponse;
 import com.example.vegetablemanagementsupplybackend.DTO.VegetableDto;
-import com.example.vegetablemanagementsupplybackend.Entity.Media;
-import com.example.vegetablemanagementsupplybackend.Entity.Provider;
-import com.example.vegetablemanagementsupplybackend.Entity.Vegetable;
+import com.example.vegetablemanagementsupplybackend.Entity.*;
 import com.example.vegetablemanagementsupplybackend.Enum.ProviderStatusEnum;
+import com.example.vegetablemanagementsupplybackend.Exception.DuplicateException;
 import com.example.vegetablemanagementsupplybackend.Exception.ResourceNotFoundException;
 import com.example.vegetablemanagementsupplybackend.Exception.UploadFileException;
-import com.example.vegetablemanagementsupplybackend.Repository.MediaRepository;
-import com.example.vegetablemanagementsupplybackend.Repository.ProviderRepository;
-import com.example.vegetablemanagementsupplybackend.Repository.VegetableRepository;
+import com.example.vegetablemanagementsupplybackend.Repository.*;
 import com.example.vegetablemanagementsupplybackend.Service.UploadFileService;
 import com.example.vegetablemanagementsupplybackend.Service.VegetableService;
 import com.example.vegetablemanagementsupplybackend.Util.FileUtil;
@@ -43,6 +40,12 @@ public class VegetableServiceImpl implements VegetableService {
     private ProviderRepository providerRepository;
 
     @Autowired
+    private CategoryRepository categoryRepository;
+
+    @Autowired
+    private UnitRepository unitRepository;
+
+    @Autowired
     private UploadFileService uploadFileService;
 
     private final VegetableConverter vegetableConverter;
@@ -52,22 +55,28 @@ public class VegetableServiceImpl implements VegetableService {
     @Override
     public VegetableDto createVegetable(
             String providerId,
+            Integer categoryId,
+            Integer unitId,
             MultipartFile[] files,
             String uploadTo,
             VegetableDto vegetableDto
     ) {
-        // Lấy Provider theo id
         Provider provider = providerRepository.findById(providerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Provider", "Id", providerId));
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new ResourceNotFoundException("Category", "Id", categoryId));
+        Unit unit = unitRepository.findById(unitId)
+                .orElseThrow(() -> new ResourceNotFoundException("unit", "Id", unitId));
 
         // Convert vegetable sang vegetableDto
         Vegetable vegetable = vegetableConverter.dtoToVegetable(vegetableDto);
 
         // Kiểm tra xem sản phẩm đã tồn tại chưa
         List<Vegetable> vegetables = provider.getVegetables();
-        boolean existed = vegetables.stream().anyMatch(existedVegetable -> existedVegetable == vegetable);
+        boolean existed = vegetables.stream()
+                .anyMatch(existedVegetable -> existedVegetable.getVegetableName() == vegetable.getVegetableName());
         if(existed) {
-            return null;
+            throw new DuplicateException(Vegetable.class.getName(), "ALL", "Vegetable Object");
         }
 
         // Kiểm tra tài khoản provider có active không
@@ -76,6 +85,8 @@ public class VegetableServiceImpl implements VegetableService {
             return null;
         }
         vegetable.setProvider(provider);
+        vegetable.setCategory(category);
+        vegetable.setUnit(unit);
         Vegetable savedVegetable = this.vegetableRepository.save(vegetable);
 
         // Thực hiện lưu trữ ảnh của sản phẩm
@@ -107,7 +118,6 @@ public class VegetableServiceImpl implements VegetableService {
                     media.setUrl(fileName);
                     this.mediaRepository.save(media);
                 }
-
             }
         });
 
@@ -118,11 +128,12 @@ public class VegetableServiceImpl implements VegetableService {
     public VegetableDto updateVegetable(String vegetableId, VegetableDto vegetableDto) {
         Vegetable vegetable = this.vegetableRepository.findById(vegetableId)
                 .orElseThrow(() -> new ResourceNotFoundException("Vegetable", "Id", vegetableId));
-        vegetable.setVegetableName(vegetableDto.getVegetableName());
-        vegetable.setCurrentPricing(vegetableDto.getCurrentPricing());
-        vegetable.setCategory(vegetableDto.getCategory());
-        vegetable.setCertificates(vegetableDto.getCertificates());
-        vegetable.setUnits(vegetableDto.getUnits());
+        Vegetable vegetableConverted = vegetableConverter.dtoToVegetable(vegetableDto);
+        vegetable.setVegetableName(vegetableConverted.getVegetableName());
+        vegetable.setCurrentPricing(vegetableConverted.getCurrentPricing());
+        vegetable.setCategory(vegetableConverted.getCategory());
+        vegetable.setUnit(vegetableConverted.getUnit());
+        vegetable.setCertificates(vegetableConverted.getCertificates());
         Vegetable updatedVegetable = this.vegetableRepository.save(vegetable);
         return vegetableConverter.vegetableToDto(updatedVegetable);
     }

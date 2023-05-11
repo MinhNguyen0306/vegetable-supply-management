@@ -2,7 +2,9 @@ package com.example.vegetablemanagementsupplybackend.Entity;
 
 import com.example.vegetablemanagementsupplybackend.Enum.ProviderStatusEnum;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
@@ -14,7 +16,7 @@ import java.util.List;
 @Entity
 @Table(name = "providers")
 @Data
-@NoArgsConstructor
+@NoArgsConstructor @AllArgsConstructor
 public class Provider {
     @Id
     @GeneratedValue(generator = "UUID")
@@ -33,12 +35,16 @@ public class Provider {
     @Enumerated(EnumType.STRING)
     private ProviderStatusEnum status;
 
-    @OneToOne(mappedBy = "provider")
+    @JsonManagedReference(value = "provider-user")
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "id_user", referencedColumnName = "id_user")
     private User user;
 
-    @OneToMany(mappedBy = "provider", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<Unit> units;
+//    @JsonManagedReference(value = "unit-provider")
+//    @OneToMany(mappedBy = "provider", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+//    private List<Unit> units;
 
+    @JsonManagedReference(value = "vegetable-provider")
     @OneToMany(mappedBy = "provider", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Vegetable> vegetables = new ArrayList<>();
 

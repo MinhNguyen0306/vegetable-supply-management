@@ -18,13 +18,13 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("api/vegetable")
+@RequestMapping("api/v1/vegetable")
 @Slf4j
 public class VegetableController {
     @Autowired
     private VegetableService vegetableService;
 
-    @PostMapping("/")
+    @PostMapping
     @Operation(
         summary = "Create a vegetable",
         description = "Provider insert a vegetable",
@@ -41,15 +41,19 @@ public class VegetableController {
         ),
         @ApiResponse(responseCode = "400", description = "Bad request")}
     )
-    public ResponseEntity<VegetableDto> createVegetable(
+    public ResponseEntity<?> createVegetable(
         @RequestParam(name = "providerId") String providerId,
-        @RequestParam(name = "avatar")MultipartFile[] files,
+        @RequestParam(name = "categoryId") Integer categoryId,
+        @RequestParam(name = "unitId") Integer unitId,
+        @RequestParam(name = "medias")MultipartFile[] files,
         @RequestParam(value = "uploadTo", defaultValue = AppConstants.UPLOAD_SERVER, required = false) String uploadTo,
-        @RequestBody VegetableDto vegetableDto
+        @RequestPart("vegetable") VegetableDto vegetableDto
     ) {
-        VegetableDto createdVegetable = this.vegetableService.createVegetable(providerId, files, uploadTo, vegetableDto);
+        VegetableDto createdVegetable = this.vegetableService.createVegetable(
+                providerId, categoryId, unitId, files, uploadTo, vegetableDto);
         if(createdVegetable == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(new RestApiResponse(false, "Request is not eligible"),
+                    HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(createdVegetable, HttpStatus.CREATED);
     }
@@ -73,8 +77,8 @@ public class VegetableController {
         @ApiResponse(responseCode = "400", description = "Bad request")}
     )
     public ResponseEntity<VegetableDto> updateVegetable(
-            @PathVariable String vegetableId,
-            @RequestBody VegetableDto vegetableDto
+        @PathVariable String vegetableId,
+        @RequestBody VegetableDto vegetableDto
     ) {
         VegetableDto updatedVegetable = this.vegetableService.updateVegetable(vegetableId, vegetableDto);
         if(vegetableDto == null) {
@@ -90,7 +94,7 @@ public class VegetableController {
         return ResponseEntity.ok(vegetableDto);
     }
 
-    @GetMapping("/")
+    @GetMapping
     public ResponseEntity<VegetableResponse> getAllVegetables(
         @RequestParam(value = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
         @RequestParam(value = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,

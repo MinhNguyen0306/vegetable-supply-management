@@ -1,6 +1,8 @@
 package com.example.vegetablemanagementsupplybackend.Entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
@@ -9,6 +11,7 @@ import org.hibernate.annotations.GenericGenerator;
 @Table(name = "order_items")
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class OrderItem {
     @Id
     @GeneratedValue(generator = "UUID")
@@ -18,11 +21,13 @@ public class OrderItem {
 
     private int quantity;
 
-    @ManyToOne
+    @JsonBackReference(value = "vegetable-item")
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_vegetable")
     private Vegetable vegetable;
 
-    @ManyToOne
+    @JsonBackReference(value = "order-item")
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_order")
     private Order order;
 }

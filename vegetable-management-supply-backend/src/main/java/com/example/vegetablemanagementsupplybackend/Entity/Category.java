@@ -1,6 +1,8 @@
 package com.example.vegetablemanagementsupplybackend.Entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,7 +11,7 @@ import java.util.List;
 @Entity
 @Table(name = "categories")
 @Data
-@NoArgsConstructor
+@NoArgsConstructor @AllArgsConstructor
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,6 +19,7 @@ public class Category {
     private int id;
     private String categoryName;
 
+    @JsonManagedReference(value = "vegetable-category")
     @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
     private List<Vegetable> vegetables;
 }

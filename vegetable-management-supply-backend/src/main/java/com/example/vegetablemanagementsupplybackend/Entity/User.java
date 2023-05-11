@@ -1,5 +1,6 @@
 package com.example.vegetablemanagementsupplybackend.Entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,15 +13,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "users")
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor @AllArgsConstructor
 @Builder
 public class User implements UserDetails {
     @Id
@@ -38,12 +37,12 @@ public class User implements UserDetails {
     @Column(name = "password_hash")
     private String pass;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "id_provider", referencedColumnName = "id_provider")
+    @JsonBackReference(value = "provider-user")
+    @OneToOne(mappedBy = "user")
     private Provider provider;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "id_mart", referencedColumnName = "id_mart")
+    @JsonBackReference(value = "mart-user")
+    @OneToOne(mappedBy = "user")
     private Mart mart;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)

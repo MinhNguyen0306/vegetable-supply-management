@@ -1,8 +1,10 @@
 package com.example.vegetablemanagementsupplybackend.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,8 +13,11 @@ import java.util.List;
 @Entity
 @Table(name = "units")
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor @AllArgsConstructor
+@JsonIdentityInfo(
+    generator = ObjectIdGenerators.PropertyGenerator.class,
+    property = "id"
+)
 public class Unit {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,10 +27,7 @@ public class Unit {
     @Column(unique = true)
     private String unitName;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_provider")
-    private Provider provider;
-
-    @ManyToMany(mappedBy = "units", fetch = FetchType.LAZY)
+    @JsonManagedReference(value = "vegetable-unit")
+    @OneToMany(mappedBy = "unit", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Vegetable> vegetables;
 }

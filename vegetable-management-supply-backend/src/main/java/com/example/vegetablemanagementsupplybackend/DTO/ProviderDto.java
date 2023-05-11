@@ -9,11 +9,8 @@ import java.util.Date;
 @NoArgsConstructor
 public class ProviderDto {
     private String id;
-
     private String providerName;
-
     private String productionArea;
     private String annualOutput;
-
     private Date yearActive;
 }

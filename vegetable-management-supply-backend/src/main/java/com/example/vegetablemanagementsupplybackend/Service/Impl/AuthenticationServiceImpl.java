@@ -8,7 +8,9 @@ import com.example.vegetablemanagementsupplybackend.Entity.Mart;
 import com.example.vegetablemanagementsupplybackend.Entity.Provider;
 import com.example.vegetablemanagementsupplybackend.Entity.Role;
 import com.example.vegetablemanagementsupplybackend.Entity.User;
+import com.example.vegetablemanagementsupplybackend.Enum.ProviderStatusEnum;
 import com.example.vegetablemanagementsupplybackend.Exception.ApiException;
+import com.example.vegetablemanagementsupplybackend.Exception.DuplicateException;
 import com.example.vegetablemanagementsupplybackend.Exception.ResourceNotFoundException;
 import com.example.vegetablemanagementsupplybackend.Repository.MartRepository;
 import com.example.vegetablemanagementsupplybackend.Repository.ProviderRepository;
@@ -27,6 +29,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 
@@ -58,6 +61,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         Set<Role> roles = new HashSet<>();
         roles.add(role);
 
+        List<User> users = userRepository.findAll();
+        boolean checkEmailExisted = users.stream()
+                .anyMatch(user -> user.getEmail() == request.getEmail());
+
+        if(checkEmailExisted) {
+            throw new DuplicateException(User.class.getName(), "Email", request.getEmail());
+        }
+
         var user = User.builder()
                 .userName(request.getUserName())
                 .email(request.getEmail())
@@ -67,19 +78,21 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                 .roles(roles)
                 .build();
 
-        if(type.equals(AppConstants.MART)) {
+        User savedUser = this.userRepository.save(user);
+
+        if(type.equals(Integer.parseInt(AppConstants.MART))) {
             Mart mart = new Mart();
             mart.setMartName(new RandomUtil().randomMartName());
-            mart.setUser(user);
+            mart.setUser(savedUser);
             martRepository.save(mart);
-        } else if(type.equals(AppConstants.PROVIDER)) {
+        } else if(type.equals(Integer.parseInt(AppConstants.PROVIDER))) {
             Provider provider = new Provider();
             provider.setProviderName(new RandomUtil().randomProviderName());
-            provider.setUser(user);
+            provider.setUser(savedUser);
+            provider.setStatus(ProviderStatusEnum.PENDING);
             providerRepository.save(provider);
         }
 
-        this.userRepository.save(user);
         var jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder()
             .token(jwtToken)

@@ -1,8 +1,10 @@
 package com.example.vegetablemanagementsupplybackend.Entity;
 
 import com.example.vegetablemanagementsupplybackend.Enum.PolicyStatusEnum;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
@@ -14,7 +16,7 @@ import java.util.Set;
 @Entity
 @Table(name = "policies")
 @Data
-@NoArgsConstructor
+@NoArgsConstructor @AllArgsConstructor
 public class Policy {
     @Id
     @GeneratedValue(generator = "UUID")

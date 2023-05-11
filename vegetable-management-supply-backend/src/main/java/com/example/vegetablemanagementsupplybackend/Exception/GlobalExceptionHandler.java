@@ -1,5 +1,6 @@
 package com.example.vegetablemanagementsupplybackend.Exception;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -52,6 +53,14 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?>  handleUploadFileException(UploadFileException exception, WebRequest request) {
         ErrorDetail errorDetail = new ErrorDetail(
             new Date(), exception.getMessage(), request.getContextPath(), request.getDescription(false)
+        );
+        return new ResponseEntity<>(errorDetail, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(DuplicateException.class)
+    public ResponseEntity<?> handleDuplicateException(DuplicateException exception, HttpServletRequest request) {
+        ErrorDetail errorDetail = new ErrorDetail(
+            new Date(), exception.getMessage(), request.getContextPath(), ""
         );
         return new ResponseEntity<>(errorDetail, HttpStatus.BAD_REQUEST);
     }

@@ -28,7 +28,6 @@ public class UnitServiceImpl implements UnitService {
         Provider provider = this.providerRepository.findById(providerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Provider", "Id", providerId));
         Unit unit = converter.dtoToUnit(unitDto);
-        unit.setProvider(provider);
         Unit createdUnit = this.unitRepository.save(unit);
         return converter.unitToDto(createdUnit);
     }

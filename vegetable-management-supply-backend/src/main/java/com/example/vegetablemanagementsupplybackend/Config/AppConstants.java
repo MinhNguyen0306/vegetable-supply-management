@@ -10,6 +10,7 @@ public class AppConstants {
     public static final Integer ADMIN_USER = 501;
     public static final Integer MART_USER = 502;
     public static final Integer PROVIDER_USER = 503;
+    public static final String ADMIN = "501";
     public static final String MART = "502";
     public static final String PROVIDER = "503";
 
