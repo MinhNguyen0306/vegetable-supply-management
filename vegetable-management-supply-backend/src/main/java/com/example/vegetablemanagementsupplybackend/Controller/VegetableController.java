@@ -1,7 +1,7 @@
 package com.example.vegetablemanagementsupplybackend.Controller;
 
-import com.example.vegetablemanagementsupplybackend.DTO.ResponsePayload.RestApiResponse;
 import com.example.vegetablemanagementsupplybackend.Config.AppConstants;
+import com.example.vegetablemanagementsupplybackend.DTO.ResponsePayload.RestApiResponse;
 import com.example.vegetablemanagementsupplybackend.DTO.ResponsePayload.VegetableResponse;
 import com.example.vegetablemanagementsupplybackend.DTO.VegetableDto;
 import com.example.vegetablemanagementsupplybackend.Service.VegetableService;
@@ -94,6 +94,7 @@ public class VegetableController {
         return ResponseEntity.ok(vegetableDto);
     }
 
+//    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_MART')")
     @GetMapping
     public ResponseEntity<VegetableResponse> getAllVegetables(
         @RequestParam(value = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
@@ -102,6 +103,38 @@ public class VegetableController {
         @RequestParam(value = "sortDir", defaultValue = AppConstants.SORT_DIR, required = false) String sortDir
     ) {
         VegetableResponse vegetableResponse = this.vegetableService.getAllVegetables(pageNumber, pageSize, sortBy, sortDir);
+        if(vegetableResponse == null) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return ResponseEntity.ok(vegetableResponse);
+    }
+
+    @GetMapping("/provider/{providerId}")
+    public ResponseEntity<VegetableResponse> getVegetablesByProvider(
+            @PathVariable("providerId") String providerId,
+            @RequestParam(value = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
+            @RequestParam(value = "sortBy", defaultValue = AppConstants.SORT_BY, required = false) String sortBy,
+            @RequestParam(value = "sortDir", defaultValue = AppConstants.SORT_DIR, required = false) String sortDir
+    ) {
+        VegetableResponse vegetableResponse = this.vegetableService.getVegetablesByProvider(
+                providerId, pageNumber, pageSize, sortBy, sortDir);
+        if(vegetableResponse == null) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return ResponseEntity.ok(vegetableResponse);
+    }
+
+    @GetMapping("/search/{key}")
+    public ResponseEntity<VegetableResponse> getVegetablesByKeySearch(
+            @PathVariable("key") String key,
+            @RequestParam(value = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
+            @RequestParam(value = "sortBy", defaultValue = AppConstants.SORT_BY, required = false) String sortBy,
+            @RequestParam(value = "sortDir", defaultValue = AppConstants.SORT_DIR, required = false) String sortDir
+    ) {
+        VegetableResponse vegetableResponse = this.vegetableService.getVegetablesByKeySearch(
+                key, pageNumber, pageSize, sortBy, sortDir);
         if(vegetableResponse == null) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }

@@ -28,9 +28,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 
 @Service
@@ -93,9 +91,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
             providerRepository.save(provider);
         }
 
-        var jwtToken = jwtService.generateToken(user);
+        var access_token = jwtService.generateToken(user);
+        var refresh_token = jwtService.generateRefreshToken(user);
+        Map<String, String> tokens = new HashMap<>();
+        tokens.put("access_token", access_token);
+        tokens.put("refresh_token", refresh_token);
         return AuthenticationResponse.builder()
-            .token(jwtToken)
+            .tokens(tokens)
             .build();
     }
 
@@ -108,9 +110,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
             var user = userRepository.findByEmail(request.getEmail())
                     .orElseThrow(() -> new ResourceNotFoundException("User", "email", request.getEmail()));
-            var jwtToken = jwtService.generateToken(user);
+            var access_token = jwtService.generateToken(user);
+            var refresh_token = jwtService.generateRefreshToken(user);
+            Map<String, String> tokens = new HashMap<>();
+            tokens.put("access_token", access_token);
+            tokens.put("refresh_token", refresh_token);
             return AuthenticationResponse.builder()
-                    .token(jwtToken)
+                    .tokens(tokens)
                     .build();
         } catch (BadCredentialsException e) {
             log.error("Bad Credentials", e.getMessage());

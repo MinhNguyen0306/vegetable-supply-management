@@ -172,6 +172,58 @@ public class VegetableServiceImpl implements VegetableService {
     }
 
     @Override
+    public VegetableResponse getVegetablesByProvider(
+        String providerId,
+        Integer pageNumber,
+        Integer pageSize,
+        String sortBy,
+        String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase("asc") ?
+                Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
+        Page<Vegetable> page = this.vegetableRepository.getVegetablesByProvider(providerId, pageable);
+
+        List<Vegetable> vegetables = page.getContent();
+        List<VegetableDto> vegetableDtoList = vegetableConverter.vegetablesToDto(vegetables);
+
+        VegetableResponse response = new VegetableResponse();
+        response.setPageNumber(pageNumber);
+        response.setPageSize(pageSize);
+        response.setVegetableDtoList(vegetableDtoList);
+        response.setTotalElements(page.getTotalElements());
+        response.setTotalPages(page.getTotalPages());
+        response.setLastPage(page.isLast());
+
+        return response;
+    }
+
+    @Override
+    public VegetableResponse getVegetablesByKeySearch(
+        String keySearch,
+        Integer pageNumber,
+        Integer pageSize,
+        String sortBy,
+        String sortDir) {
+        Sort sort = sortDir.equalsIgnoreCase("asc") ?
+                Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
+        Page<Vegetable> page = this.vegetableRepository.getVegetablesByKeySearch("%"+keySearch+"%", pageable);
+
+        List<Vegetable> vegetables = page.getContent();
+        List<VegetableDto> vegetableDtoList = vegetableConverter.vegetablesToDto(vegetables);
+
+        VegetableResponse response = new VegetableResponse();
+        response.setPageNumber(pageNumber);
+        response.setPageSize(pageSize);
+        response.setVegetableDtoList(vegetableDtoList);
+        response.setTotalElements(page.getTotalElements());
+        response.setTotalPages(page.getTotalPages());
+        response.setLastPage(page.isLast());
+
+        return response;
+    }
+
+    @Override
     public void deleteVegetable(String vegetableId) {
         Vegetable vegetable = this.vegetableRepository.findById(vegetableId)
                 .orElseThrow(() -> new ResourceNotFoundException("Vegetable", "Id", vegetableId));

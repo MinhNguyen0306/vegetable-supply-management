@@ -16,10 +16,26 @@ public interface VegetableService {
     VegetableDto updateVegetable(String vegetableId, VegetableDto vegetableDto);
     VegetableDto getVegetableById(String vegetableId);
     VegetableResponse getAllVegetables(
-            Integer pageNumber,
-            Integer pageSize,
-            String sortBy,
-            String sortDir
+        Integer pageNumber,
+        Integer pageSize,
+        String sortBy,
+        String sortDir
     );
+    VegetableResponse getVegetablesByProvider(
+        String providerId,
+        Integer pageNumber,
+        Integer pageSize,
+        String sortBy,
+        String sortDir
+    );
+
+    VegetableResponse getVegetablesByKeySearch(
+        String keySearch,
+        Integer pageNumber,
+        Integer pageSize,
+        String sortBy,
+        String sortDir
+    );
+
     void deleteVegetable(String vegetableId);
 }

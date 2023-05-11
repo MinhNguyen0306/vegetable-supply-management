@@ -1,5 +1,6 @@
 package com.example.vegetablemanagementsupplybackend.Service.Impl;
 
+import com.example.vegetablemanagementsupplybackend.Exception.ApiException;
 import com.example.vegetablemanagementsupplybackend.Service.JwtService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -52,13 +53,30 @@ public class JwtServiceImpl implements JwtService {
     }
 
     @Override
+    public String generateRefreshToken(UserDetails userDetails) {
+        return generateRefreshToken(new HashMap<>(), userDetails);
+    }
+
+    @Override
     public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
         return Jwts
                 .builder()
                 .setClaims(extraClaims)
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 30))
+                .signWith(getSignInKey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    @Override
+    public String generateRefreshToken(Map<String, Object> extraClaims, UserDetails userDetails) {
+        return Jwts
+                .builder()
+                .setClaims(extraClaims)
+                .setSubject(userDetails.getUsername())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
@@ -71,6 +89,10 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public boolean isTokenExpired(String token) {
+        boolean checkTokenExpired = extractExpiration(token).before(new Date());
+        if(checkTokenExpired) {
+            throw new ApiException("The token has expired on " + extractExpiration(token).toString());
+        }
         return extractExpiration(token).before(new Date());
     }
 

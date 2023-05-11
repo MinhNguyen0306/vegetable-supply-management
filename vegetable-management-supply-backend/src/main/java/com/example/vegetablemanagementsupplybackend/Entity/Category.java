@@ -17,6 +17,8 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_category")
     private int id;
+
+    @Column(unique = true)
     private String categoryName;
 
     @JsonManagedReference(value = "vegetable-category")
