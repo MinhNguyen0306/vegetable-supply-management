@@ -42,6 +42,11 @@ public class Order {
     @JoinColumn(name = "id_mart")
     private Mart mart;
 
+    @JsonBackReference(value = "provider-order")
+    @ManyToOne
+    @JoinColumn(name = "id_provider")
+    private Provider receiveBy;
+
     @JsonManagedReference(value = "order-item")
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<OrderItem> orderItems = new ArrayList<>();

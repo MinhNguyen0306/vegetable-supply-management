@@ -22,7 +22,7 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
-    @GetMapping("/all")
+    @GetMapping("/list/all")
     public ResponseEntity<OrderResponse> getAllOrder(
             @RequestParam(value = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
             @RequestParam(value = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
@@ -126,7 +126,7 @@ public class OrderController {
     }
 
 
-    @PatchMapping("/{orderId}/reject")
+    @PatchMapping("/list/pending")
     @Operation(
             summary = "Update Order Status",
             description = "Update order status change status from PENDING to REJECT",
@@ -138,15 +138,18 @@ public class OrderController {
             ),
             @ApiResponse(responseCode = "404", description = "Order not found"),
     })
-    public ResponseEntity<ChangeStatusResponse> rejectOrder(@PathVariable String orderId) {
-        ChangeStatusResponse response = this.orderService.rejectOrder(orderId);
+    public ResponseEntity<ChangeStatusResponse> resolveOrder(
+            @PathVariable String orderId,
+            @RequestParam("status") OrderStatusEnum typeResolve
+    ) {
+        ChangeStatusResponse response = this.orderService.resolveOrder(orderId, typeResolve);
         if(response.getMessage().equals("failed")) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
-        return ResponseEntity.ok(response);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PatchMapping("/{orderId}/cancel")
+    @PatchMapping("/list/cancel")
     @Operation(
             summary = "Update Order Status",
             description = "Update order status change status from PENDING to CANCEL",
@@ -161,9 +164,21 @@ public class OrderController {
     public ResponseEntity<ChangeStatusResponse> cancelOrder(@PathVariable String orderId) {
         ChangeStatusResponse response = this.orderService.cancelOrder(orderId);
         if(response.getMessage().equals("failed")) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
         return ResponseEntity.ok(response);
+    }
+
+    @PatchMapping("/list/resolving")
+    public ResponseEntity<ChangeStatusResponse> doneOrderByProvider(
+        @RequestParam("providerId") String providerId,
+        @RequestParam("orderId") String orderId
+    ) {
+        ChangeStatusResponse response = this.orderService.doneOrderByProvider(providerId, orderId);
+        if(response.getMessage().equals("failed")) {
+            return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
 }

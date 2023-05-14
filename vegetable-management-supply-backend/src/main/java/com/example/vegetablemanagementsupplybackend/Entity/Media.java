@@ -20,6 +20,11 @@ public class Media {
     private String url;
     private String extension;
 
+    @JsonBackReference(value = "provider-media")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_provider", referencedColumnName = "id_provider")
+    private Provider provider;
+
     @JsonBackReference(value = "certificate-media")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_certificate")

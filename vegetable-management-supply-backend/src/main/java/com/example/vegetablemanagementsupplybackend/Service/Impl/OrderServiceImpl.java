@@ -7,14 +7,15 @@ import com.example.vegetablemanagementsupplybackend.DTO.ResponsePayload.OrderRes
 import com.example.vegetablemanagementsupplybackend.Entity.Mart;
 import com.example.vegetablemanagementsupplybackend.Entity.Order;
 import com.example.vegetablemanagementsupplybackend.Entity.OrderItem;
+import com.example.vegetablemanagementsupplybackend.Entity.Provider;
 import com.example.vegetablemanagementsupplybackend.Enum.OrderStatusEnum;
 import com.example.vegetablemanagementsupplybackend.Exception.ResourceNotFoundException;
 import com.example.vegetablemanagementsupplybackend.Repository.MartRepository;
 import com.example.vegetablemanagementsupplybackend.Repository.OrderItemRepository;
 import com.example.vegetablemanagementsupplybackend.Repository.OrderRepository;
+import com.example.vegetablemanagementsupplybackend.Repository.ProviderRepository;
 import com.example.vegetablemanagementsupplybackend.Service.OrderService;
 import lombok.RequiredArgsConstructor;
-import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -25,7 +26,6 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -36,6 +36,8 @@ public class OrderServiceImpl implements OrderService {
     private OrderItemRepository orderItemRepository;
     @Autowired
     private MartRepository martRepository;
+    @Autowired
+    private ProviderRepository providerRepository;
     private final OrderConverter converter;
 
     @Override
@@ -63,17 +65,26 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public ChangeStatusResponse rejectOrder(String orderId) {
+    public ChangeStatusResponse resolveOrder(String orderId, OrderStatusEnum typeResolve) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order", "Id", orderId));
         OrderStatusEnum orderStatusEnum = order.getOrderStatus();
         if(orderStatusEnum.equals(OrderStatusEnum.PENDING)) {
-            order.setOrderStatus(OrderStatusEnum.REJECT);
+            if(typeResolve.equals(OrderStatusEnum.RESOLVE)) {
+                order.setOrderStatus(typeResolve);
+                this.orderRepository.save(order);
+            } else if(typeResolve.equals(OrderStatusEnum.REJECT)) {
+                order.setOrderStatus(OrderStatusEnum.REJECT);
+                this.orderRepository.save(order);
+            } else {
+                return new ChangeStatusResponse("failed",
+                        orderStatusEnum.name(), OrderStatusEnum.RESOLVE.name());
+            }
             return new ChangeStatusResponse("success",
-                    orderStatusEnum.name(), order.getOrderStatus().name());
+                    orderStatusEnum.name(), OrderStatusEnum.RESOLVE.name());
         }
         return new ChangeStatusResponse("failed",
-                orderStatusEnum.name(), order.getOrderStatus().name());
+                orderStatusEnum.name(), OrderStatusEnum.RESOLVE.name());
     }
 
     @Override
@@ -81,13 +92,32 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order", "Id", orderId));
         OrderStatusEnum orderStatusEnum = order.getOrderStatus();
-        if(orderStatusEnum.equals(OrderStatusEnum.PENDING)) {
+        if(orderStatusEnum.equals(OrderStatusEnum.PENDING) || orderStatusEnum.equals(OrderStatusEnum.RESOLVE)) {
             order.setOrderStatus(OrderStatusEnum.CANCEL);
+            this.orderRepository.save(order);
             return new ChangeStatusResponse("success",
-                    orderStatusEnum.name(), order.getOrderStatus().name());
+                    orderStatusEnum.name(), OrderStatusEnum.CANCEL.name());
         }
         return new ChangeStatusResponse("failed",
-                orderStatusEnum.name(), order.getOrderStatus().name());
+                orderStatusEnum.name(), OrderStatusEnum.CANCEL.name());
+    }
+
+    @Override
+    public ChangeStatusResponse doneOrderByProvider(String providerId, String orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Order", "Id", orderId));
+        Provider provider = this.providerRepository.findById(providerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Provider", "Id", providerId));
+        OrderStatusEnum orderStatusEnum = order.getOrderStatus();
+        if(orderStatusEnum.equals(OrderStatusEnum.RESOLVE)) {
+            order.setOrderStatus(OrderStatusEnum.DONE);
+            order.setReceiveBy(provider);
+            this.orderRepository.save(order);
+            return new ChangeStatusResponse("success",
+                    orderStatusEnum.name(), OrderStatusEnum.DONE.name());
+        }
+        return new ChangeStatusResponse("failed",
+                orderStatusEnum.name(), OrderStatusEnum.DONE.name());
     }
 
     @Override

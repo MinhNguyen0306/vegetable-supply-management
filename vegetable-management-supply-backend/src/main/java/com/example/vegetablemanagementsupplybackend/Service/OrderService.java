@@ -5,13 +5,12 @@ import com.example.vegetablemanagementsupplybackend.DTO.ResponsePayload.ChangeSt
 import com.example.vegetablemanagementsupplybackend.DTO.ResponsePayload.OrderResponse;
 import com.example.vegetablemanagementsupplybackend.Enum.OrderStatusEnum;
 
-import java.util.List;
-
 public interface OrderService {
     OrderResponse getAllOrder(Integer pageNumber, Integer pageSize, String sortBy, String sortDir);
     OrderDto createOrder(String martId, OrderDto orderDto);
-    ChangeStatusResponse rejectOrder(String orderId);
+    ChangeStatusResponse resolveOrder(String orderId, OrderStatusEnum typeResolve);
     ChangeStatusResponse cancelOrder(String orderId);
+    ChangeStatusResponse doneOrderByProvider(String providerId, String orderId);
     OrderDto updateOrder(String orderId);
     OrderResponse filterOrderByStatus(OrderStatusEnum orderStatusEnum, Integer pageNumber, Integer pageSize, String sortBy, String sortDir);
     OrderResponse getAllOrderOfMart(String martId, Integer pageNumber,

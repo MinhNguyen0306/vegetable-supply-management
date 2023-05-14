@@ -32,6 +32,10 @@ public class Provider {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date yearActive;
 
+    @JsonManagedReference(value = "provider_media")
+    @OneToMany(mappedBy = "provider", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Media> businessLicense;
+
     @Enumerated(EnumType.STRING)
     private ProviderStatusEnum status;
 
@@ -40,9 +44,10 @@ public class Provider {
     @JoinColumn(name = "id_user", referencedColumnName = "id_user")
     private User user;
 
-//    @JsonManagedReference(value = "unit-provider")
-//    @OneToMany(mappedBy = "provider", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-//    private List<Unit> units;
+    @JsonManagedReference(value = "provider-order")
+    @OneToMany(mappedBy = "receiveBy", cascade = CascadeType.ALL)
+    private List<Order> orders ;
+
 
     @JsonManagedReference(value = "vegetable-provider")
     @OneToMany(mappedBy = "provider", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
