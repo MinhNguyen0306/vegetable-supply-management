@@ -13,7 +13,7 @@ import Button from 'src/components/common/Button';
 import { toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
 import OverlayModal from 'src/components/common/modal/OverlayModal';
-import { setOverlayOpen } from 'src/redux/features/appStateSlice';
+import { setOverlayOpen } from 'src/redux/features/appState/appState.slice';
 
 const units = [
   {id: 1, dataName:'200g/bó'},

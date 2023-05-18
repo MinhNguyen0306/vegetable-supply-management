@@ -8,7 +8,6 @@ import { FaBars } from "react-icons/fa";
 import { BiSearch, BiBell } from "react-icons/bi";
 import { AiOutlineMail, AiOutlineUser, AiOutlineLogout } from "react-icons/ai";
 
-
 const TopbarProvider: React.FC = () => {
 
     const [sidebarOpen, setSidebarOpen] = React.useState<boolean>(false);

@@ -10,10 +10,22 @@ export interface Vegetable {
 
 export interface VegetableDetail {
     vegetableId: string
-    vegetable: Vegetable;
+    vegetableName: string;
+    currentStock: number;
+    currentPricing: number;
+    description?: string;
     certificationList?: ICertificationList;
     total_certification?: number;
     unitProductList?: IUnitProductList;
+}
+
+export interface ListVegetableResponse {
+    content: VegetableDetail[],
+    pageNumber: number,
+    pageSize: number,
+    totalElements: number,
+    totalPages: number,
+    lastPage: boolean
 }
 
 export interface VegetablePayload{

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { setThemeMode } from 'src/redux/features/themeModeSlice';
+import { setThemeMode } from 'src/redux/features/appState/appState.slice';
 import menuConfigs from 'src/configs/menu.config';
 import SidebarItem from './SidebarItem';
 

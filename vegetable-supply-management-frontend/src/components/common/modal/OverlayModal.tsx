@@ -4,7 +4,7 @@ import LoadingModal from './LoadingModal';
 import ErrorModal from './ErrorModal';
 import SuccessModal from './SuccessModal';
 import { useDelayTimeout } from 'src/hooks/useDelayTimeout';
-import { setOverlayOpen } from 'src/redux/features/appStateSlice';
+import { setOverlayOpen } from 'src/redux/features/appState/appState.slice';
 
 interface Props {
     type: 'loading' | 'error' | 'success' | 'confirm';

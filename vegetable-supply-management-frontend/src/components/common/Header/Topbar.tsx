@@ -4,7 +4,7 @@ import React from "react";
 import Logo from "../Logo";
 import { BsBoxes } from "react-icons/bs";
 import { useDispatch } from "react-redux";
-import { setOrderSidebarOpen } from "src/redux/features/appStateSlice";
+import { setOrderSidebarOpen } from "src/redux/features/appState/appState.slice";
 
 interface Props {
   children?: any

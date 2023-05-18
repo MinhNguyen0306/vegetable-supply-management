@@ -4,7 +4,7 @@ import FormDatepicker from '../form/FormDatepicker';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { useDispatch, useSelector } from 'react-redux';
-import { setOrderSidebarOpen } from 'src/redux/features/appStateSlice';
+import { setOrderSidebarOpen } from 'src/redux/features//appState/appState.slice';
 import Button from './Button';
 import Images from 'src/assets/images';
 

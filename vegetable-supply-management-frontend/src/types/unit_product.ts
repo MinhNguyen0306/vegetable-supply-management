@@ -1,9 +1,9 @@
-import { IProvider } from "./provider";
+import { Provider } from "./provider";
 
 export interface IUnitProduct {
     id_unit: number;
     name_unit: string;
-    ofProvider: IProvider;
+    ofProvider: Provider;
 }
 
 export interface IPayLoadUnitProduct {
