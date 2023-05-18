@@ -62,7 +62,7 @@ public class OrderController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/mart")
+    @GetMapping("/mart/{martId}")
     @Operation(
         summary = "Get All Order of Mart",
         description = "Mart request list ordered",
@@ -75,7 +75,7 @@ public class OrderController {
         @ApiResponse(responseCode = "404", description = "Not found Mart with this ID")
     })
     public ResponseEntity<OrderResponse> getAllOrderOfMart(
-            @RequestParam("martId") String martId,
+            @PathVariable("martId") String martId,
             @RequestParam(value = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
             @RequestParam(value = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
             @RequestParam(value = "sortBy", defaultValue = AppConstants.SORT_BY, required = false) String sortBy,
@@ -85,7 +85,7 @@ public class OrderController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/mart/{martId}/status")
+    @GetMapping("/mart/{martId}")
     @Operation(
             summary = "Get All Order By Status of Mart",
             description = "Mart request list ordered by status",
@@ -126,7 +126,7 @@ public class OrderController {
     }
 
 
-    @PatchMapping("/list/pending")
+    @PatchMapping("/resolve/{orderId}")
     @Operation(
             summary = "Update Order Status",
             description = "Update order status change status from PENDING to REJECT",
@@ -149,7 +149,7 @@ public class OrderController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PatchMapping("/list/cancel")
+    @PatchMapping("/cancel/{orderId}")
     @Operation(
             summary = "Update Order Status",
             description = "Update order status change status from PENDING to CANCEL",
@@ -169,7 +169,7 @@ public class OrderController {
         return ResponseEntity.ok(response);
     }
 
-    @PatchMapping("/list/resolving")
+    @PatchMapping("/done")
     public ResponseEntity<ChangeStatusResponse> doneOrderByProvider(
         @RequestParam("providerId") String providerId,
         @RequestParam("orderId") String orderId

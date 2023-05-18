@@ -1,0 +1,1 @@
+export type TRegisterProviderStatus = 'completed' | 'pending' | 'failed';

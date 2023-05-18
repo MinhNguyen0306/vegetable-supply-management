@@ -1,0 +1,70 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    body {
+        @apply m-0 p-0 box-border bg-[#f6f6f6] text-base
+    }
+
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+        /* display: none; <- Crashes Chrome on hover */
+        -webkit-appearance: none;
+        margin: 0; /* <-- Apparently some margin are still there even though it's hidden */
+    }
+
+    *::-webkit-scrollbar {
+        @apply w-[7px]
+    }
+
+    *::-webkit-scrollbar-track {
+        @apply bg-white rounded-sm
+    }
+
+    *::-webkit-scrollbar-thumb {
+        @apply bg-slate-400 rounded-sm border-4 border-black
+    }   
+}
+
+@layer components {
+    .noscroll {
+        @apply overflow-hidden;
+    }
+    .active-thumb {
+        @apply border-lime-400 border-[3px];
+    }
+
+    .menu-item {
+        @apply p-5 inline-block cursor-pointer hover:bg-gradient-to-b hover:from-[#72bf49] hover:to-[#66a843];
+    }
+
+    .badge-item {
+        @apply relative p-0 m-0 font-bold text-xl ml-5 cursor-pointer;
+    }
+
+    .mega-sub-item {
+        @apply block p-2 hover:bg-white hover:text-black cursor-pointer;
+    }
+
+    .mega-sub-item-title {
+        @apply block font-semibold text-xl mb-5;
+    }
+
+    .sidebar-item {
+        @apply flex gap-2 items-center p-3 mx-2 hover:bg-slate-200
+        text-slate-600 rounded-lg cursor-pointer;
+    }
+
+    .sidebar-item.active {
+        @apply bg-slate-200 border-r-8 border-r-orange-500 text-orange-500 font-bold;
+    }
+
+    .fixedBox {
+        @apply !bg-gray-900 !fixed right-0 top-[61px] !rounded-none transition-all duration-300
+    }
+
+    .dropdown-expand {
+        @apply flex flex-col
+    }
+}
