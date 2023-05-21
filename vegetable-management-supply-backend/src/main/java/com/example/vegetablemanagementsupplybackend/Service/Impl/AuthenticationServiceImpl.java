@@ -1,6 +1,7 @@
 package com.example.vegetablemanagementsupplybackend.Service.Impl;
 
 import com.example.vegetablemanagementsupplybackend.Config.AppConstants;
+import com.example.vegetablemanagementsupplybackend.Converter.UserConverter;
 import com.example.vegetablemanagementsupplybackend.DTO.RequestPayload.AuthenticationRequest;
 import com.example.vegetablemanagementsupplybackend.DTO.RequestPayload.RegisterRequest;
 import com.example.vegetablemanagementsupplybackend.DTO.ResponsePayload.AuthenticationResponse;
@@ -48,6 +49,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     @Autowired
     private RoleRepository roleRepository;
 
+    @Autowired
+    private UserConverter userConverter;
     @Autowired
     private JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
@@ -105,17 +108,18 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public AuthenticationResponse login(AuthenticationRequest request) {
         try {
             authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
+                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
             );
 
-            var user = userRepository.findByEmail(request.getEmail())
-                    .orElseThrow(() -> new ResourceNotFoundException("User", "email", request.getEmail()));
+            var user = userRepository.findByEmail(request.getUsername())
+                    .orElseThrow(() -> new ResourceNotFoundException("User", "email", request.getUsername()));
             var access_token = jwtService.generateToken(user);
             var refresh_token = jwtService.generateRefreshToken(user);
             Map<String, String> tokens = new HashMap<>();
             tokens.put("access_token", access_token);
             tokens.put("refresh_token", refresh_token);
             return AuthenticationResponse.builder()
+                    .user(userConverter.userToDto(user))
                     .tokens(tokens)
                     .build();
         } catch (BadCredentialsException e) {

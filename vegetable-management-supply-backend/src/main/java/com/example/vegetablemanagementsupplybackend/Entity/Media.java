@@ -22,7 +22,7 @@ public class Media {
 
     @JsonBackReference(value = "provider-media")
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_provider", referencedColumnName = "id_provider")
+    @JoinColumn(name = "id_provider")
     private Provider provider;
 
     @JsonBackReference(value = "certificate-media")

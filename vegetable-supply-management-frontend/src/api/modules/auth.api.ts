@@ -3,8 +3,8 @@ import publicClient from "../configs/publicClient";
 import { LoginPayload, RegisterPayload } from "src/types/auth";
 
 const authEnpoints = {
-    register: (type: number | undefined) => `auth/register?type=${type}`,
-    login: "api/v1/auth/login",
+    register: (type: number) => `auth/register?type=${type}`,
+    login: "auth/login",
 }
 
 const authApi = {
@@ -13,14 +13,15 @@ const authApi = {
             const response = await publicClient.post(
                 authEnpoints.login,
                 { username, password }
-            );
-
+            )
+            .then((response) => response)
+            .catch((error) => error);
             return { response }
         } catch (error) {
             return { error }
         }
     },
-    register: async ({ username, email, address, phone, password, confirmPassword, type }: RegisterPayload) => {
+    register: async (type: number, { username, email, address, phone, password, confirmPassword }: RegisterPayload) => {
         try {
             const response = await publicClient.post(
                 authEnpoints.register(type),

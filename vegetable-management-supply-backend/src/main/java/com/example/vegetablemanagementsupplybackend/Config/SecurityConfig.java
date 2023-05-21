@@ -36,7 +36,7 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public class SecurityConfig {
     public static final String[] PERMIT_URLS = {
-        "api/auth/**",
+        "api/v1/auth/**",
         "v3/api-docs",
         "v2/api-docs",
         "configuration/ui",

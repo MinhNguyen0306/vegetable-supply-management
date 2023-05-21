@@ -1,22 +1,27 @@
 import { useState } from "react";
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Images from "../../../assets/images";
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import authApi from "../../../api/modules/auth.api";
 import { BsEye, BsEyeSlash } from "react-icons/bs";
 import Button from "../Button";
+import FormInput from "src/components/form/FormInput";
+import FormPassword from "src/components/form/FormPassword";
+import OverlayModal from "../modal/OverlayModal";
+import {
+  setErrorMessage,
+  setSuccessMessage,
+  setModalLoading,
+} from "../../../redux/features/appState/appState.slice";
 
 const regexPhoneNumber: RegExp = /(84|0[3|5|7|8|9])+([0-9]{8})\b/g;
 
 const SignupFormProvider = ({ switchAuthState }: { switchAuthState: () => void }) => {
 
+  const navigate = useNavigate();
   const dispatch = useDispatch()
-
-  const [isRegisterRequest, setIsRegisterRequest] = useState<boolean>(false)
-  const [errorMessage, setErrorMessage] = useState<string | undefined>("")
-  const [isShowPassword, setIdShowPassword] = useState<boolean>(false)
 
   const SignupFormProvider = useFormik({
     initialValues: {
@@ -29,51 +34,102 @@ const SignupFormProvider = ({ switchAuthState }: { switchAuthState: () => void }
     },
     validationSchema: Yup.object({
       username: Yup.string()
-        .min(8, "username minimum 8 characters")
-        .required("username is required"),
+        .min(8, "Ít nhất 8 ký tự")
+        .required("Username là bắt buộc"),
       email: Yup.string()
-        .email("Invalid email format")
-        .required("email is required"),
+        .email("Email không hợp lệ")
+        .required("Email là bắt buộc"),
       phone: Yup.string()
-        .matches(regexPhoneNumber, "Phone number is not valid"),
+        .matches(regexPhoneNumber, "Số điện thoại không hợp lệ")
+        .required("Số điện thoại là bắt buộc"),
       address: Yup.string()
-        .min(4, "Address min 4 characters")
-        .required("Address is required"),
+        .min(4, "Ít nhất 5 ký tự")
+        .required("Địa chỉ là bắt buộc"),
       password: Yup.string()
-        .min(8, "password minimum 8 characters")
-        .required("password is required"),
-      confirmPassword: Yup.string()
-        .oneOf([Yup.ref('password')], "Password must match")
+        .min(8, "Ít nhất 8 ký tự")
+        .required("Mật khẩu là bắt buộc"),
     }),
     onSubmit: async values => {
-      setErrorMessage(undefined)
-      setIsRegisterRequest(true)
-      const { response, error } = await authApi.register(values);
+      dispatch(setErrorMessage(undefined))
+      dispatch(setSuccessMessage(undefined))
+      dispatch(setModalLoading(true))
+      const { response, error } = await authApi.register(503, values);
+      dispatch(setModalLoading(false))
+
+      if(response) {
+        SignupFormProvider.resetForm()
+        dispatch(setSuccessMessage("Đăng ký nhà cung cấp thành công"))
+      }
+
+      if(error) {
+        dispatch(setErrorMessage("Đăng ký nhà cung cấp thất bại"))
+      }
     }
   })
 
   return (
     <>
       {/* Login Container */}
-      <div className='bg-gray-300 flex rounded-3xl shadow-lg max-w-3xl p-5'>
+      <div className='bg-white flex rounded-3xl shadow-lg max-w-3xl p-5'>
 
         {/* Form */}
         <div className='w-1/2 px-14'>
           <h2 className='font-bold uppercase text-xl'>Đăng ký nhà cung cấp</h2>
           <form className='flex flex-col gap-4' onSubmit={SignupFormProvider.handleSubmit}>
-            <input className='rounded-xl p-2 px-3 outline-none mt-8' type="text" name="userName" placeholder="Your username"/>
-            <input className='rounded-xl p-2 px-3 outline-none' type="text" name="email" placeholder="Your email"/>
-            <input className='rounded-xl p-2 px-3 outline-none' type="text" name="address" placeholder="Your address"/>
-            <input className='rounded-xl p-2 px-3 outline-none' type="text" name="phone" placeholder="Your phone"/>
-            <div className='relative rounded-xl px-1 w-full bg-white'>
-              <input className='bg-transparent w-[85%] h-full outline-none p-2' type={isShowPassword ? "text" : "password"}
-              name="password" placeholder="Your password"/>
-              <div className="absolute top-1/2 -translate-y-1/2 right-0 cursor-pointer hover:bg-slate-300 h-full w-[15%]
-                rounded-lg grid content-center justify-center hover:text-slate-700" 
-                onClick={() => setIdShowPassword(!isShowPassword)}>
-                { isShowPassword ? <BsEyeSlash /> : <BsEye /> }
-              </div>
-            </div>
+            <FormInput
+              id="username"
+              name="username"
+              type="text"
+              placeholder="Nhập username"
+              rounded='large'
+              errors={SignupFormProvider.touched.username && SignupFormProvider.errors.username !== undefined}
+              helperText={SignupFormProvider.errors.username}
+              onChange={SignupFormProvider.handleChange}
+            />
+            <FormInput
+              id="email"
+              name="email"
+              type="text"
+              placeholder="Nhập email"
+              rounded='large'
+              errors={SignupFormProvider.touched.email && SignupFormProvider.errors.email !== undefined}
+              helperText={SignupFormProvider.errors.email}
+              onChange={SignupFormProvider.handleChange}
+            />
+            <FormInput
+              id="address"
+              name="address"
+              type="text"
+              placeholder="Nhập địa chỉ"
+              rounded='large'
+              errors={SignupFormProvider.touched.address && SignupFormProvider.errors.address !== undefined}
+              helperText={SignupFormProvider.errors.address}
+              onChange={SignupFormProvider.handleChange}
+            />
+            <FormInput
+              id="phone"
+              name="phone"
+              type="text"
+              placeholder="Nhập số điện thoại"
+              rounded='large'
+              errors={SignupFormProvider.touched.phone && SignupFormProvider.errors.phone !== undefined}
+              helperText={SignupFormProvider.errors.phone}
+              onChange={SignupFormProvider.handleChange}
+            />
+            <FormPassword 
+              id="password"
+              name="password"
+              placeholder="Mật khẩu"
+              errors={SignupFormProvider.touched.password && SignupFormProvider.errors.password !== undefined}
+              helperText={SignupFormProvider.errors.password}
+              onChange={SignupFormProvider.handleChange}
+            />
+            {/* <FormPassword 
+              placeholder="Nhập lại mật khẩu"
+              errors={SignupFormProvider.touched.confirmPassword && SignupFormProvider.errors.confirmPassword !== undefined}
+              helperText={SignupFormProvider.errors.confirmPassword}
+              onChange={SignupFormProvider.handleChange}
+            /> */}
             <Button rounded type="submit">Đăng ký</Button>
           </form>
 

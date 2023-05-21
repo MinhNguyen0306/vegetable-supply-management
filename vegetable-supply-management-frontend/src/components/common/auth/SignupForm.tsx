@@ -1,23 +1,22 @@
 import { useState } from "react";
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Images from "../../../assets/images";
 import { useDispatch } from 'react-redux';
 import authApi from "../../../api/modules/auth.api";
 import { BsEye, BsEyeSlash } from "react-icons/bs";
 import Button from "../Button";
+import { setErrorMessage, setModalLoading, setSuccessMessage } from "src/redux/features/appState/appState.slice";
+import FormPassword from "src/components/form/FormPassword";
+import FormInput from "src/components/form/FormInput";
 
 const regexPhoneNumber: RegExp = /(84|0[3|5|7|8|9])+([0-9]{8})\b/g;
 
 const SignupForm = ({ switchAuthState }: { switchAuthState: () => void }) => {
 
   const dispatch = useDispatch()
-
-  const [isRegisterRequest, setIsRegisterRequest] = useState<boolean>(false)
-  const [errorMessage, setErrorMessage] = useState<string | undefined>("")
-  const [isShowPassword, setIsShowPassword] = useState<boolean>(false)
-
+  
   const SignupForm = useFormik({
     initialValues: {
       username: "",
@@ -46,34 +45,80 @@ const SignupForm = ({ switchAuthState }: { switchAuthState: () => void }) => {
         .oneOf([Yup.ref('password')], "Password must match")
     }),
     onSubmit: async values => {
-      setErrorMessage(undefined)
-      setIsRegisterRequest(true)
-      const { response, error } = await authApi.register(values);
+      dispatch(setErrorMessage(undefined))
+      dispatch(setSuccessMessage(undefined))
+      dispatch(setModalLoading(true))
+      const { response, error } = await authApi.register(502,values);
+      dispatch(setModalLoading(false))
+
+      if(response) {
+        SignupForm.resetForm();
+        dispatch(setSuccessMessage("Đăng ký thành công"))
+      }
+
+      if(error) {
+        dispatch(setErrorMessage("Đăng ký thất bại"))
+      }
     }
   })
 
   return (
     <>
       {/* Login Container */}
-      <div className='bg-gray-300 flex rounded-3xl shadow-lg max-w-3xl p-5'>
+      <div className='bg-white flex rounded-3xl shadow-lg max-w-3xl p-5'>
 
         {/* Form */}
         <div className='w-1/2 px-14'>
-          <h2 className='font-bold uppercase text-xl'>Đăng ký</h2>
+          <h2 className='font-bold uppercase text-xl mb-4'>Đăng ký</h2>
           <form className='flex flex-col gap-4' onSubmit={SignupForm.handleSubmit}>
-            <input className='rounded-xl p-2 px-3 outline-none mt-8' type="text" name="username" placeholder="Your username"/>
-            <input className='rounded-xl p-2 px-3 outline-none' type="text" name="email" placeholder="Your email"/>
-            <input className='rounded-xl p-2 px-3 outline-none' type="text" name="address" placeholder="Your address"/>
-            <input className='rounded-xl p-2 px-3 outline-none' type="text" name="phone" placeholder="Your phone"/>
-            <div className='relative rounded-xl px-1 w-full bg-white'>
-              <input className='bg-transparent w-[85%] h-full outline-none p-2' type={isShowPassword ? "text" : "password"}
-              name="password" placeholder="Your password"/>
-              <div className="absolute top-1/2 -translate-y-1/2 right-0 cursor-pointer hover:bg-slate-300 h-full w-[15%]
-                rounded-lg grid content-center justify-center hover:text-slate-700" 
-                onClick={() => setIsShowPassword(!isShowPassword)}>
-                { isShowPassword ? <BsEyeSlash /> : <BsEye /> }
-              </div>
-            </div>
+            <FormInput
+              id="username"
+              name="username"
+              placeholder="Nhập username"
+              type="text"
+              rounded="large"
+              errors={SignupForm.touched.username && SignupForm.errors.username !== undefined}
+              helperText={SignupForm.errors.username}
+              onChange={SignupForm.handleChange}
+            />
+            <FormInput
+              id="email"
+              name="email"
+              placeholder="Nhập email"
+              type="text"
+              rounded="large"
+              errors={SignupForm.touched.email && SignupForm.errors.email !== undefined}
+              helperText={SignupForm.errors.email}
+              onChange={SignupForm.handleChange}
+            />
+            <FormInput
+              id="address"
+              name="address"
+              placeholder="Nhập địa chỉ"
+              type="text"
+              rounded="large"
+              errors={SignupForm.touched.address && SignupForm.errors.address !== undefined}
+              helperText={SignupForm.errors.address}
+              onChange={SignupForm.handleChange}
+            />
+            <FormInput
+              id="phone"
+              name="phone"
+              placeholder="Nhập số điện thoại"
+              type="text"
+              rounded="large"
+              errors={SignupForm.touched.phone && SignupForm.errors.phone !== undefined}
+              helperText={SignupForm.errors.phone}
+              onChange={SignupForm.handleChange}
+            />
+            <FormPassword
+              id="password"
+              name="password"
+              placeholder="Nhập mật khẩu"
+              errors={SignupForm.touched.password && SignupForm.errors.password !== undefined}
+              helperText={SignupForm.errors.password}
+              onChange={SignupForm.handleChange} 
+            />
             <Button rounded type="submit">Đăng ký</Button>
           </form>
 

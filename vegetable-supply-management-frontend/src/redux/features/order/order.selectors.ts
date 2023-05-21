@@ -37,8 +37,8 @@ const initialState: OrderSlice = {
     },
     orderDetail: {
         id: "",
-        orderDate: new Date(),
-        deliveryDate: new Date(),
+        orderDate: new Date().toISOString(),
+        deliveryDate: new Date().toISOString(),
         orderStatus: "",
         mart: {
             id: "",

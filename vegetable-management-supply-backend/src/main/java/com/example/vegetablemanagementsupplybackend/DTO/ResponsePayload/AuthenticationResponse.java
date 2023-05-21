@@ -1,5 +1,6 @@
 package com.example.vegetablemanagementsupplybackend.DTO.ResponsePayload;
 
+import com.example.vegetablemanagementsupplybackend.DTO.UserDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,5 +13,6 @@ import java.util.Map;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AuthenticationResponse {
+    UserDto user;
     Map<String, String> tokens;
 }

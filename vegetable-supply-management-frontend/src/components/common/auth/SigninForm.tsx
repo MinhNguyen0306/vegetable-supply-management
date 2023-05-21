@@ -1,51 +1,87 @@
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Images from "../../../assets/images";
 import { BsEyeSlash, BsEye } from 'react-icons/bs';
+import { useDispatch } from 'react-redux';
+import { setErrorMessage, setModalLoading, setSuccessMessage } from 'src/redux/features/appState/appState.slice';
+import authApi from 'src/api/modules/auth.api';
+import { setIsAuthenticated, setUser } from 'src/redux/features/user/user.slice';
+import { ErrorResponse } from 'src/types/base';
+import FormPassword from 'src/components/form/FormPassword';
+import FormInput from 'src/components/form/FormInput';
+import Button from '../Button';
 
 const SigninForm = ({ switchAuthState }: { switchAuthState: () => void }) => {
 
-  const [isShowPassword, setIsShowPassword] = useState<boolean>(false);
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
 
-  const signinForm = useFormik({
+  const signinFormValidate = useFormik({
     initialValues: {
       username: "",
       password: ""
     },
     validationSchema: Yup.object({
       username: Yup.string()
-        .min(8, "username minimum 8 characters")
-        .required("username is required"),
+        .min(8, "Ít nhất 8 ký tự")
+        .required("Không được để trống"),
       password: Yup.string()
-        .min(8, "password minimum 8 characters")
-        .required("password is required")
+        .min(8, "Ít nhất 8 ký tự")
+        .required("Không được để trống")
     }),
     onSubmit: async values => {
+      dispatch(setErrorMessage(undefined))
+      dispatch(setSuccessMessage(undefined))
+      dispatch(setModalLoading(true))
+      const promise = await authApi.login(values)
+      dispatch(setModalLoading(false))
 
+      if(promise.response) {
+        signinFormValidate.resetForm()
+        dispatch(setSuccessMessage("Đăng nhập thành công"))
+        dispatch(setUser(promise.response))
+        navigate("/order")
+      }
+
+      if(promise.error) {
+        dispatch(setIsAuthenticated(false))
+        const { message } = promise.error as ErrorResponse
+        dispatch(setErrorMessage(message))
+      }
     }
   })
 
   return (
     <>
       {/* Login Container */}
-      <div className='bg-gray-200 flex rounded-3xl shadow-lg max-w-3xl p-5'>
+      <div className='bg-white flex rounded-3xl shadow-lg max-w-3xl p-5'>
         {/* Form */}
         <div className='w-1/2 px-14'>
-          <h2 className='font-bold uppercase text-xl'>Đăng nhập</h2>
-          <form action='' className='flex flex-col gap-4'>
-            <input className='rounded-xl p-2 px-3 outline-none mt-8' type="text" name="email" placeholder="Your Email"/>
-            <div className='relative rounded-xl px-1 w-full bg-white'>
-              <input className='bg-transparent w-[85%] h-full outline-none p-2' type={isShowPassword ? "text" : "password"}
-              name="password" placeholder="Your password"/>
-              <div className="absolute top-1/2 -translate-y-1/2 right-0 cursor-pointer hover:bg-slate-300 h-full w-[15%]
-                rounded-lg grid content-center justify-center hover:text-slate-700" 
-                onClick={() => setIsShowPassword(!isShowPassword)}>
-                { isShowPassword ? <BsEyeSlash /> : <BsEye /> }
-              </div>
-            </div>
-            <button className='rounded-xl bg-[#002D74] hover:bg-[#0f4191] text-white font-bold py-2 my-5'>Đăng nhập</button>
+          <h2 className='font-bold uppercase text-xl mb-4'>Đăng nhập</h2>
+          <form action='' className='flex flex-col gap-4' onSubmit={signinFormValidate.handleSubmit}>
+            <FormInput
+              id='username'
+              name='username'
+              placeholder='Nhập email'
+              type='text'
+              rounded='large'
+              errors={signinFormValidate.touched.username && signinFormValidate.errors.username !== undefined}
+              helperText={signinFormValidate.errors.username}
+              onChange={signinFormValidate.handleChange}
+            />
+            <FormPassword
+              id='password'
+              name='password'
+              placeholder='Nhập mật khẩu'
+              errors={signinFormValidate.touched.password && signinFormValidate.errors.password !== undefined}
+              helperText={signinFormValidate.errors.password}
+              onChange={signinFormValidate.handleChange}
+            />
+            <Button rounded type='submit'>
+              Đăng nhập
+            </Button>
           </form>
 
           <div className='grid grid-cols-3 mt-5 items-center text-gray-400'>

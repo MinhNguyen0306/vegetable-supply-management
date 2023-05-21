@@ -62,7 +62,7 @@ public class OrderController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/mart/{martId}")
+    @GetMapping
     @Operation(
         summary = "Get All Order of Mart",
         description = "Mart request list ordered",
@@ -85,7 +85,7 @@ public class OrderController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/mart/{martId}")
+    @GetMapping("/status")
     @Operation(
             summary = "Get All Order By Status of Mart",
             description = "Mart request list ordered by status",

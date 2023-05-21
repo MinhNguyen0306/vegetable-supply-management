@@ -48,12 +48,12 @@ const sidebarProviderNav: ISidebar[] = [
         title: "Quản lý đơn hàng",
         children: [
             {
-                title: "Tất cả",
+                title: "Nhận đơn đặt",
                 path: "/provider/order"
             },
             {
                 title: "Đơn giao",
-                path: "/provider/order/delivery"
+                path: "/provider/order-delivery/toship"
             }
         ]
     },
@@ -135,8 +135,14 @@ const recentVegetable: {
       releaseDate: "1/2/2023",
       provider: "Nha cung cap 1"
     },
-  ]
+]
 
-const menuConfigs = { sidebarProviderNav, sidebarAdminNav, categories, units, recentVegetable }
+const typeRegister = {
+    ADMIN: 501,
+    MART: 502,
+    PROVIDER: 503
+}
+
+const menuConfigs = { sidebarProviderNav, sidebarAdminNav, categories, units, recentVegetable, typeRegister }
 
 export default menuConfigs;

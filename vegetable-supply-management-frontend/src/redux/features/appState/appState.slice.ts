@@ -8,6 +8,15 @@ const appStateSlice = createSlice({
         setOverlayOpen: (state, action) => {
             state.overlayOpen = action.payload
         },
+        setSuccessMessage: (state, action) => {
+            state.successMessage = action.payload
+        },
+        setErrorMessage: (state, action) => {
+            state.errorMessage = action.payload
+        },
+        setModalLoading: (state, action) => {
+            state.modalLoading = action.payload
+        },
         setOrderSidebarOpen: (state, action) => {
             state.openOrderSidebar = action.payload
         },
@@ -22,6 +31,9 @@ const appStateSlice = createSlice({
 
 export const { 
     setOverlayOpen,
+    setErrorMessage, 
+    setSuccessMessage,
+    setModalLoading,
     setOrderSidebarOpen,
     setGlobalLoading,
     setThemeMode

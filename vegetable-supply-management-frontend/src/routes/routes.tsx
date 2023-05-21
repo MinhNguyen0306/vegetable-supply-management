@@ -5,13 +5,17 @@ import ProductDetail from "../pages/ProductDetail";
 import AdminHomePage from "src/pages/admin/AdminHomePage";
 import AdminLayout from "src/components/layout/AdminLayout";
 import React from "react";
-import AddProduct from "src/pages/provider/AddProduct";
+import AddProduct from "src/pages/provider/AddProductPage";
 import OrderPage from "src/pages/mart/OrderPage";
 import ContractPage from "src/pages/mart/ContractPage";
 import AdminStatisticalPage from "src/pages/admin/AdminStatisticalPage";
 import ProviderLayout from "src/components/layout/ProviderLayout";
-import ManageVegetable from "src/pages/provider/ManageVegetable";
-import HeroSlide from "src/components/common/HeroSlide";
+import ManageVegetablePage from "src/pages/provider/ManageVegetablePage";
+import ProviderOrderPage from "src/pages/provider/ProviderOrderPage";
+import DeliveryPage from "src/pages/provider/DeliveryPage";
+import ProtectedRouteProvider from "./ProtectedRouteProvider";
+import ProtectedRoute from "./ProtectedRoute";
+import UnauthorizePage from "src/pages/UnauthorizePage";
 
 interface IRouteType {
     auth?: boolean;
@@ -19,6 +23,21 @@ interface IRouteType {
     element?: JSX.Element;
     state?: string;
     layout?: React.ReactNode;
+}
+
+const ROLES = {
+    'ADMIN': {
+        id: 501,
+        name: "ROLE_ADMIN"
+    },
+    'MART': {
+        id: 502,
+        name: "ROLE_MART"
+    },
+    'PROVIDER': {
+        id: 503,
+        name: "ROLE_PROVIDER"
+    }
 }
 
 const routes: IRouteType[] = [
@@ -48,7 +67,10 @@ const routes: IRouteType[] = [
     },
     {
         path: "/order",
-        element: <OrderPage />
+        element: 
+            <ProtectedRoute allowedRoles={[ROLES.MART, ROLES.ADMIN]}>
+                <OrderPage />
+            </ProtectedRoute>
     },
     {
         path: "/product/:productId",
@@ -71,19 +93,47 @@ const routes: IRouteType[] = [
     },
     {
         path: "/provider/product/add-product",
-        element: <AddProduct  />,
+        element: 
+            <ProtectedRouteProvider allowedRoles={[ROLES.PROVIDER, ROLES.ADMIN]}>
+                <AddProduct />
+            </ProtectedRouteProvider>,
         layout: <ProviderLayout />
     },
     {
         path: "/provider/product/list/:pathVariable",
-        element: <ManageVegetable />,
+        element: 
+            <ProtectedRouteProvider allowedRoles={[ROLES.PROVIDER, ROLES.ADMIN]}>
+                <ManageVegetablePage />
+            </ProtectedRouteProvider>,
         layout: <ProviderLayout />
     },
+    {
+        path: "/provider/order",
+        element: 
+            <ProtectedRouteProvider allowedRoles={[ROLES.PROVIDER, ROLES.ADMIN]}>
+                <ProviderOrderPage />
+            </ProtectedRouteProvider>,
+        layout: <ProviderLayout />
+    },
+    {
+        path: "/provider/order-delivery/:pathVariable",
+        element: 
+            <ProtectedRouteProvider allowedRoles={[ROLES.PROVIDER, ROLES.ADMIN]}>
+                <DeliveryPage />
+            </ProtectedRouteProvider>,
+        layout: <ProviderLayout />
+    },
+
     {
         path: '*',
         element: <NotFoundPage />,
         layout: <NotHeaderLayout />
     },
+    {
+        path: "/unauthorize",
+        element: <UnauthorizePage />,
+        layout: <NotHeaderLayout />
+    }
 ]
 
 export default routes;

@@ -57,7 +57,7 @@ const TopbarProvider: React.FC = () => {
               <Logo />
             </div>
   
-            <form className="relative w-1/2 bg-secondColor rounded-md md:rounded-3xl my-2 h-10">
+            <form className="relative w-1/2 bg-white rounded-md md:rounded-3xl my-2 h-10">
               <input type="text" className="border-none w-full h-full outline-none px-10 py-3 text-black bg-transparent" 
               placeholder="...Search"/>
               <BiSearch color="black" size={30} className="absolute h-full top-1/2 right-3 -translate-y-1/2 cursor-pointer"/>

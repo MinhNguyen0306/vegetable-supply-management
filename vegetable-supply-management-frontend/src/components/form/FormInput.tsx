@@ -12,7 +12,6 @@ interface Props {
 }
 
 const FormInput = (props: Props) => {
-
   const {
     id,
     name, 
@@ -46,10 +45,10 @@ const FormInput = (props: Props) => {
         type={type}
         placeholder={placeholder}
         onChange={onChange ? (e) => onChange(e) : undefined}
-        className={`outline-none border-2 border-gray-200 py-1 px-2 ${roundedType} ${helperText && "border-red-500"}`}
+        className={`outline-none border-2 border-gray-200 py-1 px-2 ${roundedType.current} ${helperText && "border-red-500"}`}
       >
       </input>
-      {!errors ? <div className='text-red-500 text-sm'>{helperText ? helperText : ""}</div> : null}
+      {errors ? <div className='text-red-500 text-sm'>{helperText ? helperText : ""}</div> : null}
     </div>
   )
 }

@@ -32,7 +32,7 @@ public class Provider {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date yearActive;
 
-    @JsonManagedReference(value = "provider_media")
+    @JsonManagedReference(value = "provider-media")
     @OneToMany(mappedBy = "provider", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Media> businessLicense;
 
@@ -46,8 +46,11 @@ public class Provider {
 
     @JsonManagedReference(value = "provider-order")
     @OneToMany(mappedBy = "receiveBy", cascade = CascadeType.ALL)
-    private List<Order> orders ;
+    private List<Order> orders;
 
+    @JsonManagedReference(value = "provider-media")
+    @OneToMany(mappedBy = "provider", cascade = CascadeType.ALL)
+    private List<Media> mediaList = new ArrayList<>();
 
     @JsonManagedReference(value = "vegetable-provider")
     @OneToMany(mappedBy = "provider", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

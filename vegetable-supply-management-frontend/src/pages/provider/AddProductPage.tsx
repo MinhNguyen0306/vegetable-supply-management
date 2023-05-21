@@ -14,6 +14,7 @@ import { toast } from 'react-toastify';
 import { useDispatch, useSelector } from 'react-redux';
 import OverlayModal from 'src/components/common/modal/OverlayModal';
 import { setOverlayOpen } from 'src/redux/features/appState/appState.slice';
+import { convertToStandardDate } from 'src/utils/convert';
 
 const units = [
   {id: 1, dataName:'200g/bó'},
@@ -37,7 +38,6 @@ const AddProduct = () => {
   const [errorMessage, setErrorMessage] = useState<any>(null);
   const [successMessage, setSuccessMessage] = useState<any>(null);
   const [images, setImages] = useState<string[]>([]);
-  const [videos, setVideos] = useState<string[]>([]);
 
   const fileInput = useRef<HTMLInputElement>(null);
 
@@ -105,8 +105,7 @@ const AddProduct = () => {
 
       if(response) {
         AddProductForm.resetForm()
-        setSuccessMessage("Add new vegetable success")
-        toast.success("Add new vegetable success")
+        setSuccessMessage("Thêm thành công")
       }
 
       if(error) {
@@ -118,9 +117,9 @@ const AddProduct = () => {
 
   return (
     <>
-      { isRequestLoading && <OverlayModal type='loading' message="Adding vegetable..."/> }
-      { errorMessage && <OverlayModal type='error' message="Error add vegetable!" /> }
-      { successMessage && <OverlayModal type='success' message="Added success" /> }
+      { isRequestLoading && <OverlayModal type='loading' data="Adding vegetable..."/> }
+      { errorMessage && <OverlayModal type='error' data={errorMessage} /> }
+      { successMessage && <OverlayModal type='success' data={successMessage} /> }
     
       <div className='bg-white w-5/6 text-base p-7 ml-5'>
         <h1 className='font-bold text-mainColor text-xl mb-8'>Thêm sản phẩm</h1>

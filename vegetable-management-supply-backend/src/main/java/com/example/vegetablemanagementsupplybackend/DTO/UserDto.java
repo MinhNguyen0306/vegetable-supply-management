@@ -7,6 +7,8 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Set;
+
 @Data
 @NoArgsConstructor
 public class UserDto {
@@ -25,7 +27,5 @@ public class UserDto {
     @Pattern(regexp = "/(84[3|5|7|8|9])+([0-9]{8})\\b/g")
     private String phone;
 
-    @NotEmpty
-    @Size(min = 4, max = 16, message = "Password must be min of 4 chars and max of 10 chars!")
-    private String password;
+    private Set<RoleDto> roles;
 }

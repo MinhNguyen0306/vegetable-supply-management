@@ -4,12 +4,28 @@ import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
 import Images from "../../../assets/images";
 import { BsEyeSlash, BsEye } from 'react-icons/bs';
+import FormInput from 'src/components/form/FormInput';
+import FormPassword from 'src/components/form/FormPassword';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  setErrorMessage,
+  setSuccessMessage,
+  setModalLoading,
+} from "../../../redux/features/appState/appState.slice";
+import authApi from 'src/api/modules/auth.api';
+import { setUser } from 'src/redux/features/user/user.slice';
+import Button from '../Button';
+import { login } from 'src/redux/features/user/user.thunks';
+import { useAppDispatch } from 'src/redux/store';
+import { ErrorResponse } from 'src/types/base';
 
 const SigninFormProvider = ({ switchAuthState }: { switchAuthState: () => void }) => {
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const dispatchAsync = useAppDispatch();
 
-  const [isShowPassword, setIsShowPassword] = useState<boolean>(false);
+  const { loading, error } = useSelector((state: any) => state.user)
 
   const SigninFormProvider = useFormik({
     initialValues: {
@@ -18,41 +34,71 @@ const SigninFormProvider = ({ switchAuthState }: { switchAuthState: () => void }
     },
     validationSchema: Yup.object({
       username: Yup.string()
-        .min(8, "username minimum 8 characters")
-        .required("username is required"),
+        .email("Email không phù hợp")
+        .required("Không được để trống"),
       password: Yup.string()
-        .min(8, "password minimum 8 characters")
-        .required("password is required")
+        .min(8, "Ít nhất 8 ký tự")
+        .required("Không được để trống")
     }),
     onSubmit: async values => {
+      dispatch(setErrorMessage(undefined))
+      dispatch(setSuccessMessage(undefined))
+      dispatch(setModalLoading(true))
+      const promise = await authApi.login(values)
+      dispatch(setModalLoading(false))
+      if(promise.response) {
+        SigninFormProvider.resetForm()
+        dispatch(setUser(promise.response))
+        dispatch(setSuccessMessage("Đăng nhập thành công"))
+        navigate("/provider/product/list/all")
+      } 
+      if(promise.error) {
+        const { message } = promise.error as ErrorResponse
+        dispatch(setErrorMessage(message))
+      }
 
+      // if(response) {
+      //   SigninFormProvider.resetForm();
+      //   dispatch(setUser(response))
+      //   dispatch(setSuccessMessage("Đăng nhập thành công"))
+      //   navigate("/provider/product/add-product")
+      // }
+
+      // if(error) {
+      //   dispatch(setErrorMessage("Đăng nhập thất bại"))
+      // }
     }
   })
 
   return (
     <>
       {/* Login Container */}
-      <div className='bg-gray-300 flex rounded-3xl shadow-lg max-w-3xl p-5'>
+      <div className='bg-white flex rounded-3xl shadow-lg max-w-3xl p-5'>
         {/* Form */}
         <div className='w-1/2 px-14'>
           <h2 className='font-bold uppercase text-xl'>Đăng nhập nhà cung cấp</h2>
-          <form action='' className='flex flex-col gap-4'>
-            <input className='rounded-xl p-2 px-3 outline-none mt-8' type="text" name="email" placeholder="Your Email"/>
-            <div className='relative rounded-xl px-1 w-full bg-white'>
-              <input className='bg-transparent w-[85%] h-full outline-none p-2' type={isShowPassword ? "text" : "password"}
-              name="password" placeholder="Your password"/>
-              <div className="absolute top-1/2 -translate-y-1/2 right-0 cursor-pointer hover:bg-slate-300 h-full w-[15%]
-                rounded-lg grid content-center justify-center hover:text-slate-700" 
-                onClick={() => setIsShowPassword(!isShowPassword)}>
-                { isShowPassword ? <BsEyeSlash /> : <BsEye /> }
-              </div>
-            </div>
-            <button 
-              className='rounded-xl bg-[#002D74] hover:bg-[#0f4191] text-white font-bold py-2 my-5'
-              onClick={() => navigate('/provider/product/add-product') }
-            >
+          <form action='' className='flex flex-col gap-4' onSubmit={SigninFormProvider.handleSubmit}>
+            <FormInput
+              id="username"
+              name="username"
+              type="text"
+              placeholder="Nhập email"
+              rounded='large'
+              errors={SigninFormProvider.touched.username && SigninFormProvider.errors.username !== undefined}
+              helperText={SigninFormProvider.errors.username}
+              onChange={SigninFormProvider.handleChange}
+            />
+            <FormPassword 
+              id='password'
+              name='password'
+              placeholder="Mật khẩu"
+              errors={SigninFormProvider.touched.password && SigninFormProvider.errors.password !== undefined}
+              helperText={SigninFormProvider.errors.password}
+              onChange={SigninFormProvider.handleChange}
+            />
+            <Button type='submit' rounded>
               Đăng nhập
-            </button>
+            </Button>
           </form>
 
           <div className='grid grid-cols-3 mt-5 items-center text-gray-400'>

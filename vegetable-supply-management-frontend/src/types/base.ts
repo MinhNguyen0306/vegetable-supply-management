@@ -10,3 +10,10 @@ export interface ChangeStatusResponse {
     fromStatus: string,
     toStatus: string,
 }
+
+export interface ErrorResponse {
+    description: string,
+    localtion: string,
+    message: string,
+    timestamp: number
+}

@@ -10,8 +10,8 @@ export type OrderStatus = 'PENDING' | 'RESOLVE' | 'REJECT' | 'CANCEL' | 'DONE'
 export interface OrderDetail {
     id: string,
     description?: string,
-    orderDate: Date | string,
-    deliveryDate: Date | string,
+    orderDate: string,
+    deliveryDate: string,
     orderStatus: string | number,
     mart: Mart
     orderItems: OrderItemDetail[]
