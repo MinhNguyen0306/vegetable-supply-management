@@ -5,6 +5,8 @@ import appStateSlice from "./features/appState/appState.slice";
 import categorySlice from "./features/category/category.slice";
 import { useDispatch } from "react-redux";
 import orderSlice from "./features/order/order.slice";
+import unitSlice from "./features/unit/unit.slice";
+import vegetableSlice from "./features/vegetable/vegetable.slice";
 
 const store = configureStore({
     reducer: {
@@ -12,7 +14,9 @@ const store = configureStore({
         user: userSlice,
         modal: modalSlice,
         category: categorySlice,
-        order: orderSlice
+        unit: unitSlice,
+        order: orderSlice,
+        vegetable: vegetableSlice
     }
 })
 

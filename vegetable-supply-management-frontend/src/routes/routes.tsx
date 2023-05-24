@@ -16,6 +16,8 @@ import DeliveryPage from "src/pages/provider/DeliveryPage";
 import ProtectedRouteProvider from "./ProtectedRouteProvider";
 import ProtectedRoute from "./ProtectedRoute";
 import UnauthorizePage from "src/pages/UnauthorizePage";
+import ProviderAccountPage from "src/pages/provider/ProviderAccountPage";
+import OrderDetailPage from "src/pages/provider/OrderDetailPage";
 
 interface IRouteType {
     auth?: boolean;
@@ -41,6 +43,11 @@ const ROLES = {
 }
 
 const routes: IRouteType[] = [
+    {
+        auth: true,
+        path: "/admin/login",
+        state: "login-admin"
+    },
     {
         auth: true,
         path: "/login",
@@ -116,6 +123,14 @@ const routes: IRouteType[] = [
         layout: <ProviderLayout />
     },
     {
+        path: "/provider/order/:orderId",
+        element: 
+            <ProtectedRouteProvider allowedRoles={[ROLES.PROVIDER, ROLES.ADMIN]}>
+                <OrderDetailPage />
+            </ProtectedRouteProvider>,
+        layout: <ProviderLayout />
+    },
+    {
         path: "/provider/order-delivery/:pathVariable",
         element: 
             <ProtectedRouteProvider allowedRoles={[ROLES.PROVIDER, ROLES.ADMIN]}>
@@ -123,7 +138,14 @@ const routes: IRouteType[] = [
             </ProtectedRouteProvider>,
         layout: <ProviderLayout />
     },
-
+    {
+        path: "/provider/account",
+        element: 
+            <ProtectedRouteProvider allowedRoles={[ROLES.PROVIDER]}>
+                <ProviderAccountPage/>
+            </ProtectedRouteProvider>,
+        layout: <ProviderLayout />
+    },
     {
         path: '*',
         element: <NotFoundPage />,

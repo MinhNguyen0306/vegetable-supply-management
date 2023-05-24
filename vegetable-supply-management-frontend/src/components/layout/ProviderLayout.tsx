@@ -6,6 +6,7 @@ import { Outlet } from 'react-router-dom';
 import TopbarProvider from '../common/Header/TopbarProvider';
 import { useSelector } from 'react-redux';
 import OverlayModal from '../common/modal/OverlayModal';
+import { RootState } from 'src/redux/store';
 
 interface Props {
   children?: any 
@@ -13,7 +14,7 @@ interface Props {
 
 const ProviderLayout = ({ children }: Props) => {
 
-  const { modalLoading, errorMessage, successMessage } = useSelector((state: any) => state.appState)
+  const { modalLoading, errorMessage, successMessage } = useSelector((state: RootState) => state.appState)
 
   return (
     <div>

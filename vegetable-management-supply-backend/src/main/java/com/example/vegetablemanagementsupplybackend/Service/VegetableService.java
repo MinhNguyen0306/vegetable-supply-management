@@ -2,13 +2,16 @@ package com.example.vegetablemanagementsupplybackend.Service;
 
 import com.example.vegetablemanagementsupplybackend.DTO.ResponsePayload.VegetableResponse;
 import com.example.vegetablemanagementsupplybackend.DTO.VegetableDto;
+import com.example.vegetablemanagementsupplybackend.Enum.VegetableFilterEnum;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 public interface VegetableService {
     VegetableDto createVegetable(
         String providerId,
         Integer categoryId,
-        Integer unitId,
+        List<String> unitName,
         MultipartFile[] files,
         String uploadTo,
         VegetableDto vegetableDto
@@ -37,5 +40,15 @@ public interface VegetableService {
         String sortDir
     );
 
+    VegetableResponse getVegetablesByType(
+            String providerId,
+            VegetableFilterEnum type,
+            Integer pageNumber,
+            Integer pageSize,
+            String sortBy,
+            String sortDir
+    );
+
     void deleteVegetable(String vegetableId);
+    void lockVegetable(String vegetableId);
 }

@@ -26,7 +26,7 @@ const Sidebar: React.FC<IProps> = ({ open, refer, toggleSidebar }) => {
     }
 
     return (
-        <div ref={refer} className={`${open ? 'block' : 'hidden'} md:block h-screen w-[250px] fixed text-base mt-[80px] 
+        <div ref={refer} className={`${open ? 'block' : 'hidden'} md:block h-screen w-[250px] fixed text-base mt-[56px] 
         bg-white shadow-md overflow-hidden transition-all duration-300`}>
             <ul className='flex flex-col h-screen list-none py-2 m-0 gap-1 overflow-hidden'>
                 {

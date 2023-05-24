@@ -19,7 +19,9 @@ export interface ProviderList {
 }
 
 export interface ProviderDetail {
-    provider: Provider;
-    certifications: Certification[];
-    total_certifications?: number;
+    id: string | null,
+    annualOutput: string | null,
+    productionArea: string | null,
+    providerName: string | null,
+    yearActive: string | null
 }

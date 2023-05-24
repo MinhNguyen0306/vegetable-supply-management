@@ -3,7 +3,9 @@ import initialState from "./vegetable.selectors";
 import {
     getAllVegetable,
     getVegetableById,
-    createVegetable
+    createVegetable,
+    getVegetablesByProvider,
+    getVegetablesOfProviderByType
 } from "./vegetable.thunks"
 
 const vegetableSlice = createSlice({
@@ -24,17 +26,44 @@ const vegetableSlice = createSlice({
                 state.loading = false
                 state.error = action.error
             })
+            
             .addCase(getAllVegetable.pending, (state, action) => {
                 state.loading = true
             })
-            .addCase(getAllVegetable.fulfilled, (state, aciton) => {
+            .addCase(getAllVegetable.fulfilled, (state, action) => {
                 state.loading = false
-                state.listVegetable = aciton.payload
+                console.log(action.payload)
+                state.listVegetable = action.payload
             })
             .addCase(getAllVegetable.rejected, (state, action) => {
                 state.loading = false
                 state.error = action.error
             })
+
+            .addCase(getVegetablesByProvider.pending, (state, action) => {
+                state.loading = true
+            })
+            .addCase(getVegetablesByProvider.fulfilled, (state, action) => {
+                state.loading = false
+                state.listVegetable = action.payload
+            })
+            .addCase(getVegetablesByProvider.rejected, (state, action) => {
+                state.loading = false
+                state.error = action.error
+            })
+
+            .addCase(getVegetablesOfProviderByType.pending, (state, action) => {
+                state.loading = true
+            })
+            .addCase(getVegetablesOfProviderByType.fulfilled, (state, action) => {
+                state.loading = false
+                state.listVegetable = action.payload
+            })
+            .addCase(getVegetablesOfProviderByType.rejected, (state, action) => {
+                state.loading = false
+                state.error = action.error
+            })
+
             .addCase(getVegetableById.pending, (state, action) => {
                 state.loading = true
             })
@@ -48,3 +77,5 @@ const vegetableSlice = createSlice({
             })
     }
 })
+
+export default vegetableSlice.reducer;

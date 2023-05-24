@@ -16,8 +16,9 @@ public class VegetableDto {
     private String vegetableName;
     private int currentStock;
     private double currentPricing;
+    private boolean isLock;
     private CategoryDto category;
-    private UnitDto unit;
+    private List<UnitDto> units;
     private ProviderDto provider;
     private Set<CertificateDto> certificates;
     private List<OrderItemDto> orderItems;

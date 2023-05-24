@@ -6,6 +6,7 @@ import com.example.vegetablemanagementsupplybackend.DTO.ResponsePayload.OrderRes
 import com.example.vegetablemanagementsupplybackend.Enum.OrderStatusEnum;
 
 public interface OrderService {
+    OrderDto getOrderById(String orderId);
     OrderResponse getAllOrder(Integer pageNumber, Integer pageSize, String sortBy, String sortDir);
     OrderDto createOrder(String martId, OrderDto orderDto);
     ChangeStatusResponse resolveOrder(String orderId, OrderStatusEnum typeResolve);

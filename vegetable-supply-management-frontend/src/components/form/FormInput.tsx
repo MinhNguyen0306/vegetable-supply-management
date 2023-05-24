@@ -6,6 +6,7 @@ interface Props {
   placeholder?: string,
   type: 'button' | 'checkbox' | 'email' | 'password' | 'number' | 'submit' | 'text' | 'radio' | 'file' | 'hidden' | undefined;
   rounded?: 'small' | 'medium' | 'large';
+  size?: 'small' | 'medium' | 'full',
   errors?: boolean | undefined;
   helperText?: string | false | undefined;
   onChange?: (e: any) => void
@@ -18,6 +19,7 @@ const FormInput = (props: Props) => {
     placeholder, 
     rounded,
     type,
+    size,
     errors,
     helperText,
     onChange 
@@ -38,7 +40,7 @@ const FormInput = (props: Props) => {
   }
 
   return (
-    <div className='flex flex-col'>
+    <div className={`flex flex-col ${size === 'full' ? 'w-full' : "" }`}>
       <input 
         id={id}
         name={name}

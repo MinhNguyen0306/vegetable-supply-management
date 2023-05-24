@@ -20,19 +20,11 @@ const initialState: OrderSlice = {
         lastPage: false
     },
     orderTemporary: {
-        // orderItems: [
-        //     {
-        //         quantity:5,
-        //         vegetable: {
-        //             vegetableId: "aaaa",
-        //             vegetable: {
-        //                 vegetableName: "rau ca",
-        //                 currentStock: 10,
-        //                 currentPricing: 10,
-        //             }
-        //         },
-        //     }
-        // ]
+        totalItem: 0,
+        categories: [],
+        totalPrice: 0,
+        deliveryDate: new Date().toISOString(),
+        period: "",
         orderItems: []
     },
     orderDetail: {
@@ -42,11 +34,8 @@ const initialState: OrderSlice = {
         orderStatus: "",
         mart: {
             id: "",
-            name: "",
-            address: "",
-            phone: "",
-            email: "",
-            fax: 0
+            martName: "",
+            faxCode: 0
         },
         orderItems: []
     }

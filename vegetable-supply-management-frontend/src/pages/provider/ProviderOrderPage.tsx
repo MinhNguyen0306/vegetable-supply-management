@@ -5,13 +5,18 @@ import { AiOutlineSearch } from "react-icons/ai";
 import { setOverlayOpen } from 'src/redux/features/appState/appState.slice';
 import { useDispatch, useSelector } from 'react-redux';
 import OverlayModal from 'src/components/common/modal/OverlayModal';
+import { RootState, useAppDispatch } from 'src/redux/store';
+import { getAllOrder } from 'src/redux/features/order/order.thunks';
+import { PageRequest } from 'src/types/base';
+import { OrderDetail } from 'src/types/order';
+import { useNavigate } from 'react-router-dom';
 
 const orderStatusProvider = [
   "Chờ nhận", "Đã"
 ]
 
 const headerTab: string[] = [
-  "Mã đơn hàng", "Mã khách hàng", "Tên khách hàng", "Thời gian đặt", "Thời gian nhận", "", "Thao tác"
+  "Mã đơn hàng", "Mã khách hàng", "Tên khách hàng", "Ngày đặt", "Thời gian nhận", "", "Thao tác"
 ]
 
 const orderData: any[] = [
@@ -33,37 +38,61 @@ const orderData: any[] = [
   },
 ]
 
-const optionFilter = [
+interface SortBy {
+  value: string,
+  label: string
+}
+
+const optionFilter: SortBy[] = [
+  {
+    value: "id",
+    label: "Mã đơn"
+  },
   {
     value: "deliveryDate",
-    display: "Thời gian giao"
+    label: "Thời gian giao"
   },
   {
     value: "orderDate",
-    display: "Thời gian nhận"
+    label: "Ngày đặt"
   },
   {
     value: "martId",
-    display: "Mã KH"
-  },
-  {
-    value: "orderId",
-    display: "Mã đơn"
+    label: "Mã KH"
   },
   {
     value: "mart",
-    display: "Tên KH"
+    label: "Tên KH"
   },
 ]
 
 const OrderPage = () => {
 
   const dispatch = useDispatch();
+  const dispatchThunk = useAppDispatch();
+  const navigate = useNavigate();
+
   const { overlayOpen } = useSelector((state: any) => state.appState)
 
-  const handleOpenOrderDetail = () => {
-    dispatch(setOverlayOpen(true))
+  const [pageNumber, setPageNumber] = React.useState<number>(0);
+  const [pageSize, setPageSize] = React.useState<number>(4);
+  const [sortBy, setSortBy] = React.useState<SortBy>(optionFilter[0]);
+  const [sortDir, setSortDir] = React.useState<string>('asc');
+
+  const listOrder = useSelector((state: RootState) => state.order.listOrder);
+  const orderDetail = useSelector((state: RootState) => state.order.orderDetail);
+
+  const handleOpenOrderDetail = (order: OrderDetail) => {
+    navigate(`${order.id}`)
   }
+
+  React.useEffect(() => {
+    const pageRequest: PageRequest = { pageNumber: pageNumber, pageSize: pageSize, sortBy: sortBy?.value, sortDir: sortDir }
+    const ordersPromise = dispatchThunk(getAllOrder({request: pageRequest}))
+    return () => {
+      ordersPromise.abort()
+    }
+  }, [dispatchThunk, sortBy])
 
   return (
     <>
@@ -73,18 +102,21 @@ const OrderPage = () => {
         <div className='w-full'>
           {/* Filter Section */}
           <div className='flex  h-[32px] mb-5'>
-            <div className='min-w-[100px]'>
+            <div className='min-w-[150px]'>
               <SelectForm 
                 name='filter'
-                label='Loc don hang'
+                title='-- Sắp xếp theo --'
                 options={optionFilter}
                 keyValue='value'
-                keyDisplay='display'
+                keyDisplay='label'
+                flex='row'
+                selectedOption={sortBy}
+                onChange={(s) => setSortBy(s)}
               />
             </div>
            
-            <div className='rounded border flex-1 relative h-full bg-white px-2'>
-              <AiOutlineSearch className='absolute left-3 -translate-y-1/2 top-1/2 h-full text-md'/>
+            <div className='rounded border flex-1 flex items-center relative h-full bg-white px-2'>
+              <AiOutlineSearch className='mr-2 h-full text-md'/>
               <input type='text' className='outline-none bg-transparent h-full w-full'/>
             </div>
           </div>
@@ -126,7 +158,7 @@ const OrderPage = () => {
                   <div className='flex items-center justify-center px-2 text-gray-500'>
                     <span
                       className='text-blue-500 font-bold hover:text-blue-300 cursor-pointer'
-                      onClick={handleOpenOrderDetail}
+                      onClick={() => handleOpenOrderDetail(data)}
                     >
                       Xem chi tiết
                     </span>

@@ -4,9 +4,11 @@ import com.example.vegetablemanagementsupplybackend.Converter.UnitConverter;
 import com.example.vegetablemanagementsupplybackend.DTO.UnitDto;
 import com.example.vegetablemanagementsupplybackend.Entity.Provider;
 import com.example.vegetablemanagementsupplybackend.Entity.Unit;
+import com.example.vegetablemanagementsupplybackend.Entity.Vegetable;
 import com.example.vegetablemanagementsupplybackend.Exception.ResourceNotFoundException;
 import com.example.vegetablemanagementsupplybackend.Repository.ProviderRepository;
 import com.example.vegetablemanagementsupplybackend.Repository.UnitRepository;
+import com.example.vegetablemanagementsupplybackend.Repository.VegetableRepository;
 import com.example.vegetablemanagementsupplybackend.Service.UnitService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,15 +23,18 @@ public class UnitServiceImpl implements UnitService {
     private UnitRepository unitRepository;
     @Autowired
     private ProviderRepository providerRepository;
-    private final UnitConverter converter;
+
+    @Autowired
+    private VegetableRepository vegetableRepository;
+    private final UnitConverter unitConverter;
 
     @Override
     public UnitDto createUnit(String providerId, UnitDto unitDto) {
         Provider provider = this.providerRepository.findById(providerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Provider", "Id", providerId));
-        Unit unit = converter.dtoToUnit(unitDto);
+        Unit unit = unitConverter.dtoToUnit(unitDto);
         Unit createdUnit = this.unitRepository.save(unit);
-        return converter.unitToDto(createdUnit);
+        return unitConverter.unitToDto(createdUnit);
     }
 
     @Override
@@ -42,6 +47,14 @@ public class UnitServiceImpl implements UnitService {
     @Override
     public List<UnitDto> getAllUnits() {
         List<Unit> units = this.unitRepository.findAll();
-        return converter.unitsToDto(units);
+        return unitConverter.unitsToDto(units);
+    }
+
+    @Override
+    public List<UnitDto> getAllUnitOfVegetable(String vegetableId) {
+        Vegetable vegetable = this.vegetableRepository.findById(vegetableId)
+                .orElseThrow(() -> new ResourceNotFoundException("Vegetable", "Id", vegetableId));
+        List<Unit> units = vegetable.getUnits();
+        return unitConverter.unitsToDto(units);
     }
 }

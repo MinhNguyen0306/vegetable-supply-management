@@ -38,6 +38,8 @@ const SigninForm = ({ switchAuthState }: { switchAuthState: () => void }) => {
       const promise = await authApi.login(values)
       dispatch(setModalLoading(false))
 
+      console.log(promise.response)
+
       if(promise.response) {
         signinFormValidate.resetForm()
         dispatch(setSuccessMessage("Đăng nhập thành công"))

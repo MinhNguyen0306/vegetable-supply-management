@@ -127,6 +127,13 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public OrderDto getOrderById(String orderId) {
+        Order order = this.orderRepository.findById(orderId)
+                .orElseThrow(() -> new ResourceNotFoundException("Order", "Id", orderId));
+        return converter.orderToDto(order);
+    }
+
+    @Override
     public OrderResponse getAllOrder(Integer pageNumber, Integer pageSize, String sortBy, String sortDir) {
         Sort sort = sortDir.equalsIgnoreCase("asc") ?
                 Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();

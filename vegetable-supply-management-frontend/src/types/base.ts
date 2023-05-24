@@ -1,8 +1,8 @@
 export interface PageRequest {
     pageNumber?: number,
     pageSize?: number,
-    sortBy?: string,
-    sortDir?: string
+    sortBy?: string | '',
+    sortDir?: string | ''
 }
 
 export interface ChangeStatusResponse {

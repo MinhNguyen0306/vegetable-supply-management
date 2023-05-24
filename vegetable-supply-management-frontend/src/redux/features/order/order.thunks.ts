@@ -1,6 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import publicClient from "src/api/configs/publicClient";
-import { AllOrderResponse, CreateOrderRequest, Order, OrderDetail, OrderStatus } from "src/types/order";
+import { AllOrderResponse, CreateOrderRequest, Order, OrderDetail, OrderPayload, OrderStatus } from "src/types/order";
 import { PageRequest } from "src/types/base";
 import privateClient from "src/api/configs/privateClient";
 
@@ -8,6 +8,7 @@ const orderEndpoints = {
     getAll: ({ 
         pageNumber, pageSize, sortBy, sortDir }: PageRequest
     ) => `order/list/all?pageNumber=${pageNumber}&pageSize=${pageSize}&sortBy=${sortBy}&sortBy=${sortDir}`,
+    getById: (orderId: string) => `order/${orderId}`,
     filterByStatus: (
         status: OrderStatus, 
         { pageNumber, pageSize, sortBy, sortDir }: PageRequest
@@ -41,26 +42,41 @@ const orderEndpoints = {
 export const getAllOrder = createAsyncThunk<
     AllOrderResponse,
     {
-        pageNumber: number,
-        pageSize: number,
-        sortBy: string,
-        sortDir: string,
+        request: PageRequest
     }
 >(
     "order/getAllOrder",
     async (
-        { pageNumber, pageSize, sortBy, sortDir },
+        { request },
         thunkAPI
     ) => {
+        const { pageNumber, pageSize, sortBy, sortDir } = request
         const response: AllOrderResponse = await publicClient.get(
             orderEndpoints.getAll({pageNumber, pageSize, sortBy, sortDir}),
             { signal: thunkAPI.signal }
         )
 
-        return response as AllOrderResponse
+        return response;
     }
 )
 
+export const getOrderById = createAsyncThunk<
+    OrderDetail,
+    string
+>(
+    "order/getOrderById",
+    async(
+        orderId,
+        thunkAPI
+    ) => {
+        const response: OrderDetail = await publicClient.get(
+            orderEndpoints.getById(orderId),
+            { signal: thunkAPI.signal }
+        )
+
+        return response;
+    }
+)
 
 export const getOrdersByStatus = createAsyncThunk<
     AllOrderResponse,
@@ -140,17 +156,16 @@ export const createOrder = createAsyncThunk<
     OrderDetail,
     {
         martId: string,
-        payload: Order
+        payload: OrderPayload
     }
 >(
     "order/createOrder",
     async (
         { martId, payload },
-        thunkAPI
     ) => {
         const response: OrderDetail = await privateClient.post(
             orderEndpoints.create(martId),
-            payload, { signal: thunkAPI.signal }
+            payload
         )
 
         return response;

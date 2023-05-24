@@ -8,7 +8,18 @@ const vegetableEndpoints = {
     create: "api/v1/vegetable",
     getAll: (
         { pageNumber, pageSize, sortBy, sortDir }: PageRequest
-    ) => `vegetable?pageNumber=${pageNumber}&pageSize=${pageSize}&sortBy=${sortBy}&sortBy=${sortDir}`,
+    ) => `vegetable?pageNumber=${pageNumber}&pageSize=${pageSize}&sortBy=${sortBy}&sortDir=${sortDir}`,
+    getAllByProvider: (
+        providerId: string,
+        pageNumber: number,
+        pageSize: number
+    ) => `vegetable/provider/${providerId}?pageNumber=${pageNumber}&pageSize=${pageSize}`,
+    getVegetablsOfProviderByType: (
+        providerId: string,
+        type: string,
+        pageNumber: number,
+        pageSize: number
+    ) => `vegetable/provider/${providerId}/type/${type}?pageNumber=${pageNumber}&pageSize=${pageSize}`,
     getById: (vegetableId: string) => `vegetable/${vegetableId}`,
 }
 
@@ -25,10 +36,7 @@ export const createVegetable = createAsyncThunk<
     ) => {
         const { categoryId, providerId, unitId, medias, uploadTo, vegetable } = payload
         let formData = new FormData();
-        formData.append('categoryId', categoryId.toString());
         providerId && formData.append('providerId', providerId);
-        formData.append('unitId', unitId.toString());
-        formData.append('medias', medias);
         uploadTo && formData.append('uploadTo', uploadTo);
         formData.append('vegetable', new Blob([JSON.stringify(vegetable)], {
             type: 'application/json'
@@ -56,7 +64,7 @@ export const getAllVegetable = createAsyncThunk<
     ) => {
         const { pageNumber, pageSize, sortBy, sortDir } = request
 
-        const response: ListVegetableResponse = await publicClient.post(
+        const response: ListVegetableResponse = await publicClient.get(
             vegetableEndpoints.getAll({ pageNumber, pageSize, sortBy, sortDir }),
             { signal: thunkAPI.signal }
         )
@@ -77,6 +85,49 @@ export const getVegetableById = createAsyncThunk<
         const response: VegetableDetail = await publicClient.get(
             vegetableEndpoints.getById(vegetableId),
             { signal: thunkAPI.signal }
+        )
+
+        return response;
+    }
+)
+
+export const getVegetablesByProvider = createAsyncThunk<
+    ListVegetableResponse,
+    {
+        providerId: string,
+        pageNumber: number,
+        pageSize: number
+    }
+>(
+    "vegetable/getVegetablesByProvider",
+    async (
+        {providerId, pageNumber, pageSize}, thunkAPI
+    ) => {
+        const response: ListVegetableResponse = await privateClient.get(
+            vegetableEndpoints.getAllByProvider(providerId, pageNumber, pageSize),
+            { signal: thunkAPI.signal }
+        )
+
+        return response;
+    }
+)
+
+export const getVegetablesOfProviderByType = createAsyncThunk<
+    ListVegetableResponse,
+    {
+        providerId: string,
+        type: string,
+        pageNumber: number,
+        pageSize: number
+    }
+>(
+    "vegetable/getVegetablesOfProviderByType",
+    async (
+        { providerId, type, pageNumber, pageSize }, thukAPI
+    ) => {
+        const response: ListVegetableResponse = await privateClient.get(
+            vegetableEndpoints.getVegetablsOfProviderByType(providerId, type, pageNumber, pageSize),
+            { signal: thukAPI.signal }
         )
 
         return response;

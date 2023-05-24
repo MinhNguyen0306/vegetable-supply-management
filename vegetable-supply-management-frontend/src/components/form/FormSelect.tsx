@@ -1,24 +1,30 @@
 import React from 'react';
+import { ListCategory } from 'src/types/category';
 
-interface FormSelect {
+interface Props {
     id: string;
     name?: string;
     value?: any;
     label?: string | number;
-    datas: {
-        id: number,
-        dataName: string,
-    }[];
+    options: ListCategory,
     isRequired?: boolean;
     title: string;
     flex: 'col' | 'row';
 }
 
-const FormSelect: React.FC<FormSelect> = ({...props}) => {
-    const { id, name, value, label, datas, title, flex, isRequired } = props
-
+const FormSelect = (props: Props) => {
+    const {
+        id,
+        name, 
+        value, 
+        label, 
+        options, 
+        title, 
+        flex, 
+        isRequired 
+    } = props
     return (
-        <div className={`${flex === 'col' ? "flex flex-col items-start justify-center" : "flex items-center justify-start"} gap-5`}>
+        <div className={`${flex === 'col' ? "flex flex-col items-start justify-center" : "flex items-center justify-start"} gap-5 cursor-pointer`}>
             {
                 label && (
                     <label htmlFor={id} className='min-w-[120px] text-right'>
@@ -28,11 +34,15 @@ const FormSelect: React.FC<FormSelect> = ({...props}) => {
                 )
             }
             
-            <select id={id} defaultValue={title} className='flex-1 outline-none border-2 border-gray-400 p-2 rounded-md text-center'>
+            <select 
+                id={id} 
+                defaultValue={title} 
+                className='flex-1 outline-none border-2 border-gray-400 p-2 rounded-md text-center'
+            >
                 <option disabled hidden>{ title }</option>
                 {
-                    datas.map((data, index) => (
-                        <option key={index} value={data.id}>{data.dataName}</option>
+                    options.categories?.map((data, index) => (
+                        <option key={index} value={data.id}>{data.categoryName}</option>
                     ))
                 }
             </select>

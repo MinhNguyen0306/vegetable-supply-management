@@ -20,6 +20,9 @@ const appStateSlice = createSlice({
         setOrderSidebarOpen: (state, action) => {
             state.openOrderSidebar = action.payload
         },
+        setOpenOrderConfirm: (state, action) => {
+            state.openOrderConfirm = action.payload
+        },
         setGlobalLoading: (state, action) => {
             state.globalLoading = action.payload
         },
@@ -35,6 +38,7 @@ export const {
     setSuccessMessage,
     setModalLoading,
     setOrderSidebarOpen,
+    setOpenOrderConfirm,
     setGlobalLoading,
     setThemeMode
 } = appStateSlice.actions;

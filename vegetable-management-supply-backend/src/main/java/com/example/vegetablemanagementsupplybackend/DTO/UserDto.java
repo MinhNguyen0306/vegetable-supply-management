@@ -26,6 +26,7 @@ public class UserDto {
 
     @Pattern(regexp = "/(84[3|5|7|8|9])+([0-9]{8})\\b/g")
     private String phone;
-
-    private Set<RoleDto> roles;
+    private ProviderDto provider;
+    private MartDto mart;
+    private Set<RoleDto> roleDtoSet;
 }

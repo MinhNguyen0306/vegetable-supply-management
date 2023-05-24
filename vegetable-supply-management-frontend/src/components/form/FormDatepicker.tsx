@@ -9,7 +9,7 @@ interface Props {
     label?: string,
     isRequired?: boolean
     selected: Date | undefined | null
-    onChange: (date: Date | undefined | null) => void
+    onChange: (date: Date | null) => void
     showTimeSelect?: boolean
     showTimeInput?: boolean
     dateFormat?: string

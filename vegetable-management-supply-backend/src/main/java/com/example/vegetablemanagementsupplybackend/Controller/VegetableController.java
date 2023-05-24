@@ -4,6 +4,7 @@ import com.example.vegetablemanagementsupplybackend.Config.AppConstants;
 import com.example.vegetablemanagementsupplybackend.DTO.ResponsePayload.RestApiResponse;
 import com.example.vegetablemanagementsupplybackend.DTO.ResponsePayload.VegetableResponse;
 import com.example.vegetablemanagementsupplybackend.DTO.VegetableDto;
+import com.example.vegetablemanagementsupplybackend.Enum.VegetableFilterEnum;
 import com.example.vegetablemanagementsupplybackend.Service.VegetableService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -16,6 +17,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/vegetable")
@@ -44,13 +47,13 @@ public class VegetableController {
     public ResponseEntity<?> createVegetable(
         @RequestParam(name = "providerId") String providerId,
         @RequestParam(name = "categoryId") Integer categoryId,
-        @RequestParam(name = "unitId") Integer unitId,
+        @RequestParam(name = "units") List<String> units,
         @RequestParam(name = "medias")MultipartFile[] files,
         @RequestParam(value = "uploadTo", defaultValue = AppConstants.UPLOAD_SERVER, required = false) String uploadTo,
         @RequestPart("vegetable") VegetableDto vegetableDto
     ) {
         VegetableDto createdVegetable = this.vegetableService.createVegetable(
-                providerId, categoryId, unitId, files, uploadTo, vegetableDto);
+                providerId, categoryId, units, files, uploadTo, vegetableDto);
         if(createdVegetable == null) {
             return new ResponseEntity<>(new RestApiResponse(false, "Request is not eligible"),
                     HttpStatus.BAD_REQUEST);
@@ -125,6 +128,23 @@ public class VegetableController {
         return ResponseEntity.ok(vegetableResponse);
     }
 
+    @GetMapping("provider/{providerId}/type/{type}")
+    public ResponseEntity<VegetableResponse> getVegetablesOfProviderByType(
+            @PathVariable("providerId") String providerId,
+            @PathVariable("type") VegetableFilterEnum type,
+            @RequestParam(value = "pageNumber", defaultValue = AppConstants.PAGE_NUMBER, required = false) Integer pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = AppConstants.PAGE_SIZE, required = false) Integer pageSize,
+            @RequestParam(value = "sortBy", defaultValue = AppConstants.SORT_BY, required = false) String sortBy,
+            @RequestParam(value = "sortDir", defaultValue = AppConstants.SORT_DIR, required = false) String sortDir
+    ) {
+        VegetableResponse vegetableResponse = this.vegetableService.getVegetablesByType(
+                providerId, type, pageNumber, pageSize, sortBy, sortDir);
+        if(vegetableResponse == null) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return ResponseEntity.ok(vegetableResponse);
+    }
+
     @GetMapping("/search/{key}")
     public ResponseEntity<VegetableResponse> getVegetablesByKeySearch(
             @PathVariable("key") String key,
@@ -145,5 +165,11 @@ public class VegetableController {
     public ResponseEntity<RestApiResponse> deleteVegetable(@PathVariable String vegetableId) {
         this.vegetableService.deleteVegetable(vegetableId);
         return new ResponseEntity<RestApiResponse>(new RestApiResponse(true, "Delete vegetable success!"), HttpStatus.OK);
+    }
+
+    @PatchMapping("/lock/{vegetableId}")
+    public ResponseEntity<RestApiResponse> lockVegetable(@PathVariable String vegetableId) {
+        this.vegetableService.lockVegetable(vegetableId);
+        return new ResponseEntity<>(new RestApiResponse(true, "Lock vegetable success!"), HttpStatus.OK);
     }
 }

@@ -1,71 +1,60 @@
 import React, {useEffect} from 'react'
+import { useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
-import Button from 'src/components/common/Button';
+import vegetableApi from 'src/api/modules/vegetable.api';
 import SelectForm from 'src/components/form/SelectForm';
+import { getVegetablesByProvider, getVegetablesOfProviderByType } from 'src/redux/features/vegetable/vegetable.thunks';
+import { RootState, useAppDispatch } from 'src/redux/store';
+import { VegetableDetail } from 'src/types/vegetable';
+import { AiOutlineLock, AiOutlineUnlock, AiOutlineEdit,  }  from "react-icons/ai";
+import { GoIssueOpened } from "react-icons/go";
+import LockAction from './LockAction';
+import { PayloadAction } from '@reduxjs/toolkit';
 
 const types: {type: string, display: string}[] = [
     {type: "all", display: "Tất cả"},
     {type: "active", display: "Đang hoạt động"},
     {type: "disable", display: "Đã ẩn"},
-    {type: "resolving", display: "Chờ duyệt"}, 
+    {type: "resolving", display: "Chờ duyệt"},
     {type: "soldout", display: "Hết hàng"}
-]
-
-const datas = [
-    {
-        id: 1,
-        name: "rau xa lach",
-        category: "rau",
-        unit: "200g/kg",
-        price: 20000,
-        stock: 50,
-        benefit: 10000,
-    },
-    {
-        id: 2,
-        name: "rau xa",
-        category: "rau",
-        unit: "200g/kg",
-        price: 20000,
-        stock: 50,
-        benefit: 10000,
-    },
-    {
-        id: 3,
-        name: "Ca rot",
-        category: "rau",
-        unit: "200g/kg",
-        price: 20000,
-        stock: 50,
-        benefit: 10000,
-    }
-]
-
-const actions = [
-    {
-        value: "detail",
-        display: "Xem chi tiết"
-    },
-    {
-        value: "edit",
-        display: "Chỉnh sửa"
-    },
-    {
-        value: "delete",
-        display: "Xóa"
-    }
 ]
 
 const ManageVegetableContainer = () => {
 
     const { pathname } = useLocation(); 
     const navigate = useNavigate();
+    const dispatchThunk = useAppDispatch();
+    const { listVegetable } = useSelector((state: RootState) => state.vegetable);
+    const providerId = useSelector((state: RootState) => state.user.user?.provider.id)
 
     const active = types.findIndex(type => type.type === pathname.substring(pathname.lastIndexOf('/') + 1, pathname.length));
 
     const handleChangeTab = (type: string) => {
         navigate(`${pathname.slice(0, pathname.lastIndexOf("/"))}/${type}`)
     }
+
+    React.useEffect(() => {
+        if(providerId && active === 0) {
+            const promise = dispatchThunk(getVegetablesByProvider({providerId, pageNumber: 0, pageSize: 4}))
+            return () => {
+                promise.abort();
+            }
+        }
+        if(providerId && active === 1) {
+            const promise = dispatchThunk(getVegetablesOfProviderByType({providerId, type: "active", pageNumber: 0, pageSize: 4}))
+            return () => {
+                promise.abort();
+            }
+        }
+        if(providerId && active === 2) {
+            const promise = dispatchThunk(getVegetablesOfProviderByType({providerId, type: "disable" , pageNumber: 0, pageSize: 4}))
+            return () => {
+                promise.abort();
+            }
+        }
+        console.log(listVegetable)
+        
+    }, [dispatchThunk, active])
 
     useEffect(() => {
         if(active === -1) {
@@ -74,7 +63,7 @@ const ManageVegetableContainer = () => {
     }, [])
 
     return (
-        <div className='flex flex-col bg-white min-h-[200px] w-11/12'>
+        <div className='flex flex-col bg-white min-h-[200px] w-11/12 pb-5 mb-10'>
             <div className='border-b-gray-100 h-[50px] w-full'>
                 <div className='flex border-b-2 items-center justify-start px-5'>
                     {
@@ -93,11 +82,10 @@ const ManageVegetableContainer = () => {
                 </div>
             </div>
 
-            <div className='border-2 border-gray-200 rounded mt-5'>
+            <div className='border-2 border-gray-200 rounded mt-5 mx-5'>
                 <div className='m-0 p-0 bg-gray-200'>
                     <table className='w-full'>
-                        <colgroup span={8}>
-                            <col width={100}/>
+                        <colgroup span={7}>
                             <col width={200}/>
                             <col width={100}/>
                             <col width={100}/>
@@ -109,65 +97,53 @@ const ManageVegetableContainer = () => {
                         </colgroup>
                         <thead className='bg-mainColor text-slate-50'>
                             <tr>
-                                <th className='p-4'>
-                                    <span>Id</span>
-                                </th>
                                 <th colSpan={1}>
-                                    <span>Ten san pham</span>
+                                    <span>Tên sản phẩm</span>
                                 </th>
                                 <th className='p-4'>
-                                    <span>Danh muc san pham</span>
+                                    <span>Danh mục</span>
                                 </th>
                                 <th className='p-4'>
-                                    <span>Don vi</span>
+                                    <span>Đơn vị</span>
                                 </th>
                                 <th className='p-4'>
-                                    <span>Gia</span>
+                                    <span>Giá</span>
                                 </th>
                                 <th className='p-4'>
-                                    <span>Con lai</span>
+                                    <span>Còn</span>
                                 </th>
                                 <th className='p-4'>
                                     <span>Doanh thu</span>
                                 </th>
                                 <th className='p-4'>
-                                    Thao tac
+                                    Thao tác
                                 </th>
                             </tr>
                         </thead>
                         <tbody className='[&>*:nth-child(even)]:bg-slate-100'>
                             {
-                                datas.map((data, index) => (
+                                listVegetable.content?.map((data, index) => (
                                     <tr key={index}>
-                                        <td className='p-4 text-center'>
-                                            {data.id}
-                                        </td>
                                         <td className='p-4 text-left break-all'>
-                                            {data.name}
+                                            {data.vegetableName}
                                         </td>
                                         <td className='p-4 text-center'>
-                                            <span>{data.category}</span>
+                                            <span>{data.category.categoryName}</span>
                                         </td>
                                         <td className='p-4 text-center'>
-                                            <span>{data.unit}</span>
+                                            <span>{data.unit?.unitName}</span>
                                         </td>
                                         <td className='p-4 text-center'>
-                                            <span>{data.price}</span>
+                                            <span>{data.currentPricing}</span>
                                         </td>
                                         <td className='p-4 text-center'>
-                                            <span>{data.stock}</span>
+                                            <span>{data.currentStock}</span>
                                         </td>
                                         <td className='p-4 text-center'>
-                                            <span>{data.benefit }</span>
+                                            <span>100</span>
                                         </td>
-                                        <td className='p-4 text-center'>
-                                            <SelectForm 
-                                                name='action'
-                                                label='Thao tác'
-                                                options={actions}
-                                                keyValue="value"
-                                                keyDisplay='display'
-                                            />
+                                        <td className='p-4'>
+                                            <LockAction data={data}/>
                                         </td>
                                     </tr>
                                 ))

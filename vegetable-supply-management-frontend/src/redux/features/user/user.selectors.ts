@@ -16,6 +16,18 @@ const initialState: UserSlice = {
         email: "",
         phone: "",
         address: "",
+        provider: {
+            id: "",
+            providerName: "",
+            annualOutput: "",
+            productionArea: "",
+            yearActive: ""
+        },
+        mart: {
+            id: "",
+            martName: "",
+            faxCode: 0
+        },
         roles: [
             {
                 id: 0,

@@ -7,6 +7,7 @@ import { Outlet } from "react-router-dom";
 import OrderSidebar from "../common/OrderSidebar";
 import { useSelector } from "react-redux";
 import OverlayModal from "../common/modal/OverlayModal";
+import { RootState } from "src/redux/store";
 
 interface Props {
     children?: any
@@ -14,12 +15,14 @@ interface Props {
 
 const MainLayout = ({ children }: Props) => {
 
-    const { modalLoading, errorMessage, successMessage } = useSelector((state: any) => state.appState)
+    const { modalLoading, errorMessage, successMessage, openOrderConfirm } = useSelector((state: RootState) => state.appState)
+    const orderTemporary = useSelector((state: RootState) => state.order.orderTemporary)
 
     return (
         <>
             {/* <GlobalLoading /> */}
             <div className="relative flex flex-col min-h-screen">
+                { openOrderConfirm && <OverlayModal type='order-confirm' data={orderTemporary} /> }
                 { modalLoading && <OverlayModal type="loading" data="Loading..."/> }
                 { successMessage && <OverlayModal type="success" data={successMessage}/> }
                 { errorMessage && <OverlayModal type="error" data={errorMessage}/> }

@@ -1,18 +1,57 @@
 import React, { useState } from 'react'
 import Images from '../assets/images';
-
-interface IProductDetail {
-  
-}
+import { VegetableDetail } from 'src/types/vegetable';
+import { useParams } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState, useAppDispatch } from 'src/redux/store';
+import { getVegetableById } from 'src/redux/features/vegetable/vegetable.thunks';
+import SelectForm from 'src/components/form/SelectForm';
+import { getAllUnitOfVegetable } from 'src/redux/features/unit/unit.thunks';
+import { TbCurrencyDong } from 'react-icons/tb';
+import Button from 'src/components/common/Button';
+import { addItemIntoOrderTemporary } from 'src/redux/features/order/order.slice';
+import { Unit } from 'src/types/unit';
+import { OrderItem } from 'src/types/orderitem';
+import { toast, ToastContainer } from 'react-toastify';
+import "react-toastify/dist/ReactToastify.css";
 
 const arrImg = [
   Images.VEGE_BG, Images.OTCHUONG, Images.OTCHUONG2, Images.CAROT, Images.MONGTOI
 ]
 
-const ProductDetail: React.FC<IProductDetail> = () => {
+const ProductDetail = () => {
+  const dispatchThunk = useAppDispatch();
+  const dispatch = useDispatch();
+  const { productId } = useParams();
 
-  const [quantity, setQuantity] = useState<any | null>(1);
+  const vegetableDetail = useSelector((state: RootState) => state.vegetable.vegetableDetail);
+  const listUnit = useSelector((state: RootState) => state.unit.listUnit)
+
+  const [unit, setUnit] = React.useState<Unit>();
+  const [quantity, setQuantity] = useState<number>(1);
   const [indexHover, setIndexHover] = useState(0);
+
+  function handleAddOrder () {
+    const orderItem: OrderItem = { 
+      quantity: quantity,
+      vegetable: vegetableDetail
+    }
+    toast("Đã thêm")
+    dispatch(addItemIntoOrderTemporary(orderItem))
+  }
+
+  React.useEffect(() => {
+    if(productId) {
+      const promise = dispatchThunk(getVegetableById(productId))
+      const unitsPromise = dispatchThunk(getAllUnitOfVegetable(productId))
+      return () => {
+        promise.abort()
+        unitsPromise.abort()
+      }
+    }
+    window.scrollTo(0,0)
+  }, [dispatchThunk, productId])
+
 
   const handleOnMouseOver = (index:number) => setIndexHover(index)
 
@@ -21,11 +60,11 @@ const ProductDetail: React.FC<IProductDetail> = () => {
   const plusQuantity = () => setQuantity((prev:any) => prev + 1)
 
   return (
-    <div className='flex flex-col bg-slate-400 min-h-screen'>
+    <div className='flex flex-col bg-white min-h-screen w-10/12 m-auto p-5'>
       <div className='flex m-1 h-fit w-fit'>
-        <div className='flex flex-col p-3 w-[450px]'>
+        <div className='flex flex-col w-[500px] mr-8'>
           <div className='block relative box-border h-[430px] w-full'>
-            <img src={arrImg[indexHover]} alt='' className='w-full h-full cursor-zoom-in rounded-3xl'/>
+            <img src={arrImg[indexHover]} alt='No Image' className='w-full h-full cursor-zoom-in rounded-3xl'/>
           </div>
           <div className='flex justify-between mt-3 w-full'>
             {arrImg.map((image,index) => (
@@ -35,51 +74,96 @@ const ProductDetail: React.FC<IProductDetail> = () => {
             ))}
           </div>
         </div>
-        <div className='flex flex-col w-auto'>
-          <h2>Bông cải baby</h2>
-          <h3>129.000vnd</h3>
-          <h3>Lua chon don vi klg</h3>
-          <div className='flex gap-3'>
-            <div className='flex gap-1'>
-              <input type='radio' id='1kg' name='klg' value='1kg' checked/>
-              <label htmlFor="1kg">1KG</label>
-            </div>
-            <div className='flex gap-1'>
-              <input type='radio' id='500g' name='klg' value='500g' />
-              <label htmlFor="500g">500G</label>
-            </div>
+        <div className='flex flex-col'>
+          <div className='flex flex-col'>
+              <h1 className='font-bold text-2xl'>
+                {vegetableDetail.vegetableName}
+              </h1>
+              <h2 className='flex items-center justify-start font-bold text-xl'>
+                <span>{vegetableDetail.currentPricing}</span>
+                <TbCurrencyDong />
+              </h2>
+              <h1><span>Loại sản phẩm: </span>{vegetableDetail.category.categoryName}</h1>
           </div>
+         
+          <div className='flex gap-10 items-center justify-start w-1/2'>
+            <SelectForm 
+              name='units'
+              label='Chọn đơn vị'
+              title='-- Chọn đơn vị --'
+              options={listUnit}
+              keyValue='id'
+              keyDisplay='unitName'
+              flex='col'
+              selectedOption={unit}
+              onChange={(u) => setUnit(u)}
+            />
 
-          <div className='flex gap-1'>
-            {/* Quantity Box */}
-            <div className='flex items-center rounded-xl border-4 border-emerald-700 bg-slate-500 h-[45px] w-[150px]'>
-              <input type='button' value='-' className='w-1/4 h-full font-semibold text-lg cursor-pointer' onClick={minusQuantity}/>
-              <input type="text" value={quantity} onChange={(e) => setQuantity(e.target.value)} className="
-              w-1/2 outline-none h-full bg-white p-2 font-semibold text-base text-center"/>
-              <input type='button' value='+' className='w-1/4 h-full font-semibold text-lg cursor-pointer' onClick={plusQuantity}/>
+            <div className='flex flex-col gap-2'>
+              <span className='text-left'>
+                Chọn số lượng
+              </span>
+              <div className='flex items-center rounded border border-gray-300 h-[35px] w-[150px]'>
+                <button 
+                  type='button' 
+                  onClick={minusQuantity}
+                  className='w-1/4 h-full font-semibold text-lg cursor-pointer hover:bg-gray-300' 
+                >
+                  -
+                </button>
+                <input
+                  type="number" 
+                  value={quantity} 
+                  onChange={(e) => setQuantity(Number.parseInt(e.target.value.trim()))} 
+                  className="w-1/2 outline-none h-full bg-white p-2 font-semibold text-base text-center"
+                />
+                <button 
+                  type='button'
+                  onClick={plusQuantity}
+                  className='w-1/4 h-full font-semibold text-lg cursor-pointer hover:bg-gray-300'>
+                  +
+                </button>
+              </div>
             </div>
-            {/* End Quantity Box */}
-
-            {/* Button Add Cart */}
-            <button className='w-[250px] relative bg-lime-600 h-[45px] rounded-3xl font-semibold text-white text-sm uppercase
-            before:bg-white before:w-full before:h-full before:absolute before:top-0 before:left-0 before:scale-0 before:rounded-3xl before:opacity-0
-            hover:before:opacity-100 hover:before:scale-100 before:transition-all before:duration-300'>
-                <p className=''>Them vao gio</p>
-              
-            </button>
-
-            <button className='w-[250px] relative bg-lime-600 h-[45px] rounded-3xl font-semibold
-             text-white text-sm uppercase before:bg-white before:w-1/12 before:h-full 
-             before:absolute before:top-0 before:right-0 before:opacity-0 before:rounded-3xl before:z-10
-            hover:before:w-full hover:before:opacity-100 hover:before:left-0 hover:before:right-auto
-             before:transition-all before:duration-500'>
-                <p className=''>Them vao gio</p>
-            </button>
-
-            {/* <Button contained outlined>Them vao gio</Button> */}
-            {/* Button Add Cart */}
           </div>
           
+          <div className='my-5'>
+            <Button 
+              type='button' 
+              rounded
+              onClick={handleAddOrder}
+            >
+              Đặt hàng
+            </Button>
+          </div>
+
+          <div className='flex flex-col gap-4 justify-start my-10'>
+              <h1 className='font-bold text-xl'>
+                Chứng nhận an toàn thực phẩm
+              </h1>
+              <ul className='flex gap-2'>
+                {
+                  arrImg.map((image, index) => (
+                    <img key={index} src={image} alt='NO Image' 
+                      className='w-[70px] h-[70px] border-2 border-transparent rounded-md hover:border-gray-300 cursor-zoom-in'
+                    />
+                  ))
+                }
+              </ul>
+          </div>
+
+          <div className='flex flex-col gap-4 justify-start my-10'>
+              <h1 className='font-bold text-xl'>
+                Mô tả sản phẩm
+              </h1>
+              <div>
+                <p>
+                  Lorem ipsum dolor sit, amet consectetur adipisicing elit. Quo nobis, similique unde nulla 
+                  alias eum tempora vel, consequuntur sed enim ab magni reiciendis vitae aspernatur, modi itaque! 
+                  Maxime, vitae repellendus?
+                </p>
+              </div>
+          </div>
         </div>
       </div>
     </div>

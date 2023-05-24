@@ -17,6 +17,12 @@ public interface VegetableRepository extends JpaRepository<Vegetable, String> {
     @Query("SELECT v FROM Vegetable v WHERE v.provider.id = ?1")
     Page<Vegetable> getVegetablesByProvider(String providerId, Pageable pageable);
 
+    @Query("SELECT v FROM Vegetable v WHERE v.provider.id = ?1 and v.isLock = true")
+    Page<Vegetable> getVegetablesLock(String providerId, Pageable pageable);
+
+    @Query("SELECT v FROM Vegetable v WHERE v.provider.id = ?1 and v.isLock = false")
+    Page<Vegetable> getVegetablesUnLock(String providerId, Pageable pageable);
+
     @Query("SELECT v FROM Vegetable v WHERE v.vegetableName LIKE ?1")
     Page<Vegetable> getVegetablesByKeySearch(String keySearch, Pageable pageable);
 }

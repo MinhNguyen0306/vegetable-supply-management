@@ -1,12 +1,10 @@
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
 import Images from "../../../assets/images";
-import { BsEyeSlash, BsEye } from 'react-icons/bs';
 import FormInput from 'src/components/form/FormInput';
 import FormPassword from 'src/components/form/FormPassword';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import {
   setErrorMessage,
   setSuccessMessage,
@@ -15,17 +13,12 @@ import {
 import authApi from 'src/api/modules/auth.api';
 import { setUser } from 'src/redux/features/user/user.slice';
 import Button from '../Button';
-import { login } from 'src/redux/features/user/user.thunks';
-import { useAppDispatch } from 'src/redux/store';
 import { ErrorResponse } from 'src/types/base';
 
 const SigninFormProvider = ({ switchAuthState }: { switchAuthState: () => void }) => {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const dispatchAsync = useAppDispatch();
-
-  const { loading, error } = useSelector((state: any) => state.user)
 
   const SigninFormProvider = useFormik({
     initialValues: {
@@ -51,6 +44,7 @@ const SigninFormProvider = ({ switchAuthState }: { switchAuthState: () => void }
         dispatch(setUser(promise.response))
         dispatch(setSuccessMessage("Đăng nhập thành công"))
         navigate("/provider/product/list/all")
+        console.log(promise.response)
       } 
       if(promise.error) {
         const { message } = promise.error as ErrorResponse
@@ -76,7 +70,7 @@ const SigninFormProvider = ({ switchAuthState }: { switchAuthState: () => void }
       <div className='bg-white flex rounded-3xl shadow-lg max-w-3xl p-5'>
         {/* Form */}
         <div className='w-1/2 px-14'>
-          <h2 className='font-bold uppercase text-xl'>Đăng nhập nhà cung cấp</h2>
+          <h2 className='font-bold uppercase text-xl mb-4'>Đăng nhập nhà cung cấp</h2>
           <form action='' className='flex flex-col gap-4' onSubmit={SigninFormProvider.handleSubmit}>
             <FormInput
               id="username"

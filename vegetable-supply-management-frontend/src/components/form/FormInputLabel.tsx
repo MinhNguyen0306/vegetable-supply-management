@@ -27,7 +27,7 @@ const FormInputLabel: React.FC<Props> = (props) => {
         onChange} = props
     return (
         <div className='flex flex-col'>
-            <div className={`${ flex === 'col' ? "flex flex-col items-start justify-center" : 'flex items-start justify-start'} 
+            <div className={`${ flex === 'col' ? "flex flex-col items-start justify-center" : 'flex items-center justify-start'} 
                 gap-5 mb-4`}
             >
                 <label 
@@ -47,7 +47,7 @@ const FormInputLabel: React.FC<Props> = (props) => {
                         className={`rounded-md outline-none py-1 px-2 border-2 w-full
                         basis-full border-gray-400 ${helperText && "border-red-500"}`}
                     />
-                    {!errors ? <div className='text-red-500 text-sm'>{helperText ? helperText : ""}</div> : null}
+                    {errors ? <div className='text-red-500 text-sm'>{helperText ? helperText : ""}</div> : null}
                 </div>        
             </div>
         </div>

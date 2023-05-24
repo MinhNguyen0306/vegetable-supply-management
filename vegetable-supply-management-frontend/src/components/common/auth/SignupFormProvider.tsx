@@ -1,15 +1,12 @@
-import { useState } from "react";
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Images from "../../../assets/images";
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import authApi from "../../../api/modules/auth.api";
-import { BsEye, BsEyeSlash } from "react-icons/bs";
 import Button from "../Button";
 import FormInput from "src/components/form/FormInput";
 import FormPassword from "src/components/form/FormPassword";
-import OverlayModal from "../modal/OverlayModal";
 import {
   setErrorMessage,
   setSuccessMessage,
@@ -20,7 +17,6 @@ const regexPhoneNumber: RegExp = /(84|0[3|5|7|8|9])+([0-9]{8})\b/g;
 
 const SignupFormProvider = ({ switchAuthState }: { switchAuthState: () => void }) => {
 
-  const navigate = useNavigate();
   const dispatch = useDispatch()
 
   const SignupFormProvider = useFormik({
@@ -74,7 +70,7 @@ const SignupFormProvider = ({ switchAuthState }: { switchAuthState: () => void }
 
         {/* Form */}
         <div className='w-1/2 px-14'>
-          <h2 className='font-bold uppercase text-xl'>Đăng ký nhà cung cấp</h2>
+          <h2 className='font-bold uppercase text-xl mb-4'>Đăng ký nhà cung cấp</h2>
           <form className='flex flex-col gap-4' onSubmit={SignupFormProvider.handleSubmit}>
             <FormInput
               id="username"

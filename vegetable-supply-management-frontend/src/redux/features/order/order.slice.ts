@@ -5,26 +5,47 @@ import {
     getOrdersByStatus,
     getOrdersrOfMart,
     getOrdersrOfMartByStatus,
-    createOrder
+    createOrder,
+    getOrderById
 } from "./order.thunks"
+import { OrderItem } from "src/types/orderitem";
 
 const orderSlice = createSlice({
     name: 'order',
     initialState,
     reducers: {
-        setOrderTemporary: (state, action) => {
-            state.orderTemporary = action.payload
+        addItemIntoOrderTemporary: (state, action) => {
+            const payload = action.payload as OrderItem
+            const orderItems = state.orderTemporary.orderItems as OrderItem[]
+            const checkExist = orderItems.findIndex(item => item.vegetable.id === payload.vegetable.id);
+            if(checkExist === -1) {
+                state.orderTemporary.orderItems.push(action.payload)
+                state.orderTemporary.totalItem = 
+                    state.orderTemporary.orderItems.reduce((bef, aft) => bef + aft.quantity, 0)
+                state.orderTemporary.totalPrice = 
+                    state.orderTemporary.orderItems.reduce((bef, aft) => bef + (aft.quantity * aft.vegetable.currentPricing), 0)
+                const category = payload.vegetable.category.categoryName
+                if(!state.orderTemporary.categories.includes(category)) {
+                    state.orderTemporary.categories.push(category)
+                }
+            }
         },
         deleteOrderItemTemporary: (state, action) => {
             const orderItemTemps = state.orderTemporary.orderItems
             const index = action.payload
-            if(orderItemTemps.length > 0) {
-                const newOrderItemTemps = orderItemTemps.splice(index, 1)
-                state.orderTemporary.orderItems = newOrderItemTemps
-            }
+            const newOrderItemTemps = orderItemTemps.filter((item, index) => index !== index)
+            state.orderTemporary.totalItem = 
+                newOrderItemTemps.reduce((bef, aft) => bef + aft.quantity, 0)
+            state.orderTemporary.totalPrice = 
+                newOrderItemTemps.reduce((bef, aft) => bef + (aft.quantity * aft.vegetable.currentPricing), 0)
+            state.orderTemporary.categories = newOrderItemTemps.map(item => item.vegetable.category.categoryName)
+            state.orderTemporary.orderItems = newOrderItemTemps
+        },
+        setOrderDelivaryDate: (state, action) => {
+            state.orderTemporary.deliveryDate = action.payload
         },
         clearOrderTemporary: (state, action) => {
-            state.orderTemporary.orderItems = []
+            state.orderTemporary = initialState.orderTemporary
         }
     },
     extraReducers: (builder) => {
@@ -40,6 +61,19 @@ const orderSlice = createSlice({
                 state.loading = false
                 state.error = action.error
             })
+            
+            .addCase(getOrderById.pending, (state, action) => {
+                state.loading = true
+            })
+            .addCase(getOrderById.fulfilled, (state, action) => {
+                state.loading = false
+                state.orderDetail = action.payload
+            })
+            .addCase(getOrderById.rejected, (state, action) => {
+                state.loading = false
+                state.error = action.error
+            })
+
             .addCase(getOrdersByStatus.pending, (state, action) => {
                 state.loading = true
             })
@@ -51,6 +85,7 @@ const orderSlice = createSlice({
                 state.loading = false
                 state.error = action.error
             })
+
             .addCase(getOrdersrOfMart.pending, (state, action) => {
                 state.loading = true
             })
@@ -62,6 +97,7 @@ const orderSlice = createSlice({
                 state.loading = false
                 state.error = action.error
             })
+
             .addCase(getOrdersrOfMartByStatus.pending, (state, action) => {
                 state.loading = true
             })
@@ -73,6 +109,7 @@ const orderSlice = createSlice({
                 state.loading = false
                 state.error = action.error
             })
+            
             .addCase(createOrder.pending, (state, action) => {
                 state.loading = true
             })
@@ -88,8 +125,9 @@ const orderSlice = createSlice({
 })
 
 export const {
-    setOrderTemporary,
+    addItemIntoOrderTemporary,
     deleteOrderItemTemporary,
+    setOrderDelivaryDate,
     clearOrderTemporary
 } = orderSlice.actions
 

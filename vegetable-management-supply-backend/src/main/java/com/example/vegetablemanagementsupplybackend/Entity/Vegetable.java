@@ -34,22 +34,26 @@ public class Vegetable {
     private int currentStock;
     private double currentPricing;
 
+    @Column(columnDefinition = "bit default 0")
+    private boolean isLock;
+
     @JsonBackReference(value = "vegetable-category")
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_category", referencedColumnName = "id_category")
     private Category category;
 
-    @JsonBackReference(value = "vegetable-unit")
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "id_unit", referencedColumnName = "id_unit")
-    private Unit unit;
-
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "vegetable_unit",
+        joinColumns = @JoinColumn(name = "id_vegetable"),
+        inverseJoinColumns = @JoinColumn(name = "id_unit")
+    )
+    private List<Unit> units;
     @JsonBackReference(value = "vegetable-provider")
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_provider", referencedColumnName = "id_provider")
     private Provider provider;
 
-//    @JsonManagedReference(value = "vegetable-certificate")
     @ManyToMany
     @JoinTable(
         name = "vegetable_certificate",

@@ -1,5 +1,5 @@
-import {useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import {useRef } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import React from "react";
 import Sidebar from "../Sidebar/Sidebar";
 import Logo from "../Logo";
@@ -7,15 +7,23 @@ import Images from "src/assets/images";
 import { FaBars } from "react-icons/fa";
 import { BiSearch, BiBell } from "react-icons/bi";
 import { AiOutlineMail, AiOutlineUser, AiOutlineLogout } from "react-icons/ai";
+import { useDispatch, useSelector } from "react-redux";
+import { userLogout } from "src/redux/features/user/user.slice";
+import { RootState } from "src/redux/store";
 
 const TopbarProvider: React.FC = () => {
-
     const [sidebarOpen, setSidebarOpen] = React.useState<boolean>(false);
     const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
+    const dispatch = useDispatch();
+
   
     let toggleRef = useRef<HTMLElement>(null);
     const userRef = useRef<HTMLLIElement>(null);
     const userMenuRef = useRef<HTMLUListElement>(null);
+
+    const handleLogout = () => {
+      dispatch(userLogout({}))
+    }
   
     React.useEffect(() => {
       let handler = (e: MouseEvent) => {
@@ -27,16 +35,20 @@ const TopbarProvider: React.FC = () => {
       }
       
       const handleUserMenuDropdown = (e: any) => {
-        // const eTarget = e.target as HTMLDivElement
-        // if(userRef.current === eTarget || !userRef.current?.contains(eTarget)) {
-        //   userMenuRef.current?.classList.add('hidden')
-        //   userMenuRef.current?.classList.remove('flex')
-        // } else {
-        //   userMenuRef.current?.classList.add('flex')
-        //   userMenuRef.current?.classList.remove('hidden')
-        // }
+        const eTarget = e.target as any
+        if(userRef.current === eTarget || userRef.current?.contains(eTarget)) {
+          if(userMenuRef.current?.classList.contains('flex')) {
+            userMenuRef.current?.classList.add('hidden')
+            userMenuRef.current?.classList.remove('flex')
+          } else {
+            userMenuRef.current?.classList.add('flex')
+            userMenuRef.current?.classList.remove('hidden')
+          }
+        } else {
+          userMenuRef.current?.classList.remove('flex')
+          userMenuRef.current?.classList.add('hidden')
+        }
       }
-
 
       window.addEventListener('click', handler);
       document.addEventListener('click', handleUserMenuDropdown);
@@ -74,6 +86,7 @@ const TopbarProvider: React.FC = () => {
                     <AiOutlineMail />
                   </Link>
               </li>
+
               <li ref={userRef} className="badge-item">
                 <div>
                   <img src={Images.CAROT} alt="" 
@@ -84,13 +97,17 @@ const TopbarProvider: React.FC = () => {
                     className="hidden absolute w-max flex-col top-full shadow-lg rounded-md mt-1 text-black font-normal text-base
                     right-0 bg-white"
                   >
-                    <li className="flex items-center gap-1 p-2 hover:bg-gray-100 rounded-md">
-                        <AiOutlineUser />
-                        <span>Hồ sơ</span>
+                    <li>
+                      <Link to="/provider/account">
+                        <div className="flex items-center gap-1 p-2 hover:bg-gray-100 rounded-md">
+                          <AiOutlineUser />
+                          <span>Hồ sơ</span>
+                        </div>
+                      </Link>
                     </li>
-                    <li className="flex items-center gap-1 p-2 hover:bg-gray-100 rounded-md">
-                        <AiOutlineLogout />
-                        <span>Đăng xuất</span>
+                    <li className="flex items-center gap-1 p-2 hover:bg-gray-100 rounded-md" onClick={handleLogout}>
+                      <AiOutlineLogout />
+                      <span>Đăng xuất</span>
                     </li>
                   </ul>
                 </div>

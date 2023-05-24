@@ -17,10 +17,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("api/order")
+@RequestMapping("api/v1/order")
 public class OrderController {
     @Autowired
     private OrderService orderService;
+
+    @GetMapping("/{orderId}")
+    public ResponseEntity<OrderDto> getOrderById(@PathVariable String orderId) {
+        OrderDto orderDto = this.orderService.getOrderById(orderId);
+        return ResponseEntity.ok(orderDto);
+    }
 
     @GetMapping("/list/all")
     public ResponseEntity<OrderResponse> getAllOrder(
@@ -113,7 +119,7 @@ public class OrderController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PostMapping("/")
+    @PostMapping
     public ResponseEntity<OrderDto> createOrder(
             @RequestParam(name = "martId") String martId,
             @RequestBody OrderDto orderDto

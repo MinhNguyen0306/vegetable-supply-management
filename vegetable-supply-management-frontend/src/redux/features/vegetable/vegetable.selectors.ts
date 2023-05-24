@@ -11,18 +11,22 @@ const initialState: VegetableSlice = {
     loading: false,
     error: "",
     vegetableDetail: {
-        vegetableId: "",
+        id: "",
         vegetableName: "",
         currentPricing: 0,
         currentStock: 0,
-        certificationList: {
+        lock: false,
+        certificates: {
             certificationList: [],
             total: 0
         },
-        total_certification: 0,
-        unitProductList: {
-            unitProductList: [],
-            total: 0
+        unit: {
+            id: 0,
+            unitName: ""
+        },
+        category: {
+            id: 0,
+            categoryName: ''
         }
     },
     listVegetable: {

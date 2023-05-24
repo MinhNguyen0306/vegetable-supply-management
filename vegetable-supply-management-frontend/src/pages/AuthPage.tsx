@@ -4,8 +4,10 @@ import SignupForm from "../components/common/auth/SignupForm";
 import SigninFormProvider from 'src/components/common/auth/SigninFormProvider';
 import SignupFormProvider from 'src/components/common/auth/SignupFormProvider';
 import Logo from 'src/components/common/Logo';
+import SigninFormAdmin from 'src/components/common/auth/SigninFormAdmin';
 
 const actionState = {
+  loginAdmin: "login-admin",
   login: "login",
   register: "register",
   loginProvider: "login-provider",
@@ -20,10 +22,11 @@ const AuthPage = ({ authState }: {authState?: string}) => {
   return (
     <>
       <div className='relative h-screen bg-gradient-to-r from-sky-200 to-sky-500'>
-        <div className='h-auto w-full'>
+        <div className='h-auto w-full mb-10'>
           <Logo />
         </div>
         <div className={`flex justify-center items-center h-auto`}>
+          {action === actionState.loginAdmin && <SigninFormAdmin />}
           {action === actionState.login && <SigninForm switchAuthState={() => switchAuthState(actionState.register)}/>}
           {action === actionState.register && <SignupForm switchAuthState={() => switchAuthState(actionState.login)}/>}
           {action === actionState.loginProvider && <SigninFormProvider switchAuthState={() => switchAuthState(actionState.registerProvider)}/>}

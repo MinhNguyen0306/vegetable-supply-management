@@ -27,7 +27,7 @@ public class StorageFileController {
         this.uploadFileService = uploadFileService;
     }
 
-    @GetMapping("download/{fileName}")
+    @GetMapping(value = "download/{fileName}", produces = {"image/*"})
     public ResponseEntity<UploadFileResponse> downLoadFile(
         @PathVariable String fileName,
         HttpServletRequest request

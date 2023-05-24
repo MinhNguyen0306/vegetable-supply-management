@@ -19,7 +19,18 @@ export interface OrderDetail {
 
 export type Order = Omit<OrderDetail, 'id'>
 
+export interface OrderPayload {
+    description: string,
+    deliveryDate: Date,
+    orderItems: OrderItem[]
+}
+
 export interface OrderTemporary {
+    totalItem: number
+    categories: string[],
+    totalPrice: number,
+    deliveryDate: string
+    period: string,
     orderItems: OrderItem[]
 }
 

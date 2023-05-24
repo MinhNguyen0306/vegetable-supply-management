@@ -1,5 +1,6 @@
+import { Category } from "./category";
 import { ICertificationList } from "./certification";
-import { IUnitProductList } from "./unit_product";
+import { Unit } from "./unit";
 
 export interface Vegetable {
     vegetableName: string;
@@ -8,15 +9,25 @@ export interface Vegetable {
     description?: string;
 }
 
+export interface Media {
+    id: number,
+    mediaName: string,
+    url: string,
+    extension: string
+}
+
 export interface VegetableDetail {
-    vegetableId: string
+    id: string
     vegetableName: string;
     currentStock: number;
     currentPricing: number;
     description?: string;
-    certificationList?: ICertificationList;
-    total_certification?: number;
-    unitProductList?: IUnitProductList;
+    lock: boolean;
+    certificates?: ICertificationList;
+    units: Unit[];
+    category: Category,
+    medias?: Media[],
+    
 }
 
 export interface ListVegetableResponse {
@@ -29,10 +40,10 @@ export interface ListVegetableResponse {
 }
 
 export interface VegetablePayload{
-    providerId: string | undefined,
-    categoryId: number,
-    unitId: number,
+    providerId: string | null | undefined,
+    categoryId: number | null | undefined,
+    units: string[]
     uploadTo?: string,
-    medias?: any
+    medias?: FileList | null
     vegetable: Vegetable
 }

@@ -5,9 +5,12 @@ import ErrorModal from './ErrorModal';
 import SuccessModal from './SuccessModal';
 import { setErrorMessage, setOverlayOpen, setSuccessMessage } from 'src/redux/features/appState/appState.slice';
 import OrderDetailModal from './OrderDetailModal';
+import ConfirmModal from './ConfirmModal';
+import OrderConfirmModal from './OrderConfirmModal';
+import { Order, OrderTemporary } from 'src/types/order';
 
 interface Props {
-    type: 'loading' | 'error' | 'success' | 'confirm' | 'order-detail';
+    type: 'loading' | 'error' | 'success' | 'confirm' | 'order-confirm' | 'order-detail';
     data?: any;
 }
 
@@ -47,7 +50,10 @@ const OverlayModal: React.FC<Props> = ({ type, data }) => {
             children.current = <SuccessModal message={data} />
             break;
         case 'confirm': 
-            children.current = <SuccessModal message={data} />
+            children.current = <ConfirmModal/>
+            break;
+        case 'order-confirm': 
+            children.current = <OrderConfirmModal data={data as OrderTemporary} />
             break;
         case 'order-detail':
             children.current = <OrderDetailModal data={data}/>

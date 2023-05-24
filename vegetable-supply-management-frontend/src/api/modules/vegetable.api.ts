@@ -4,30 +4,38 @@ import { VegetablePayload } from "src/types/vegetable";
 
 const vegetableEndpoints = {
     list: "vegetable",
-    add: "vegatable",
+    add: (
+        providerId: string | null | undefined,
+        categoryId: number | null | undefined,
+    ) => `vegetable?providerId=${providerId}&categoryId=${categoryId}`,
     getById: (vegetableId: string) => `vegetable/${vegetableId}`,
-
+    lock: (vegetableId: string) => `vegetable/lock/${vegetableId}`
 }
 
 const vegetableApi = {
     addVegetable: async({ ...props }: VegetablePayload) => {
         try {
-            const { providerId, categoryId, unitId, medias, uploadTo, vegetable } = props
+            const { providerId, categoryId, units, medias, uploadTo, vegetable } = props
             let formData = new FormData();
-            providerId && formData.append('providerId', providerId);
-            formData.append('categoryId', categoryId.toString());
-            formData.append('medias', medias);
-            uploadTo && formData.append('uploadTo', uploadTo);
+            if(medias) {
+                for(let i = 0; i < medias.length; i++) {
+                    formData.append('medias', medias[i]);
+                }
+            }
+            units.forEach(unit => {
+                formData.append('units', unit);
+            })
+            // formData.append('medias', medias);
             formData.append('vegetable', new Blob([JSON.stringify(vegetable)], {
                 type: 'application/json'
             }));
-            formData.append('unitId', unitId.toString());
 
             const response = await privateClient.post(
-                vegetableEndpoints.add,
-                formData
+                vegetableEndpoints.add(providerId, categoryId),
+                formData, {
+                    headers: { 'content-type': 'multipart/form-data' },
+                }
             );
-            
             return { response }
         } catch (error) {
             return { error }
@@ -51,6 +59,17 @@ const vegetableApi = {
             );
 
             return { response }
+        } catch (error) {
+            return { error }
+        }
+    },
+    lockVegetable: async (vegetableId: string) => {
+        try {
+            const response = await privateClient.patch(
+                vegetableEndpoints.lock(vegetableId)
+            );
+
+            return { response } 
         } catch (error) {
             return { error }
         }

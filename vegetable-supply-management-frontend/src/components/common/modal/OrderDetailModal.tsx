@@ -30,48 +30,54 @@ const OrderDetailModal = (props: Props) => {
                     onClick={handleCloseModal}
                 />
             </div>
-            <div className='overflow-y-scroll'>
-                <div className='flex justify-between items-center'>
-                    <span className='min-w-[100px] text-right mr-5'>Bên đặt:</span>
-                    <span className='flex-1 break-all'>Nguyễn Lê Minh</span>
-                </div>
-                <div className='flex justify-between items-center'>
-                    <span className='min-w-[100px] text-right mr-5'>Mô tả:</span>
-                    <span className='flex-1 break-all'>Mô tả này là của modal </span>
-                </div>
-                <div className='flex justify-between items-center'>
-                    <span className='min-w-[100px] text-right mr-5'>Ngày đặt: </span>
-                    <span className='flex-1 break-all'>12/3/2023</span>
-                </div>
-                <div className='flex justify-between items-center'>
-                    <span className='min-w-[100px] text-right mr-5'>Ngày giao: </span>
-                    <span className='flex-1 break-all'>15/6/2023</span>
-                </div>
-                <div className='flex justify-between items-center'>
-                    <span className='min-w-[100px] text-right mr-5'>Trạng thái: </span>
-                    <span className='flex-1 break-all'>Active</span>
-                </div>
-                <div className='flex justify-between items-center'>
-                    <span className='min-w-[100px] text-right mr-5'>Số sản phẩm: </span>
-                    <span className='flex-1 break-all'>15</span>
-                </div>
-                <div className='flex justify-between items-center'>
-                    <span className='min-w-[100px] text-right mr-5'>Bao gồm: </span>
-                    <span className='flex-1 break-all'>Rau, củ, quả</span>
-                </div>
-                <div className='flex justify-between items-center'>
-                    <span className='min-w-[100px] text-right mr-5'>Tổng cộng: </span>
-                    <span className='flex items-center justify-start flex-1 break-all'>
-                        <span>150000</span>
-                        <TbCurrencyDong />
-                    </span>
-                </div>
-            </div>
+            <div className='flex flex-col justify-between'>
+                <div className='overflow-y-scroll'>
+                    <div className='flex justify-between items-center'>
+                        <span className='min-w-[100px] text-right mr-5'>Bên đặt:</span>
+                        <span className='flex-1 break-all'>Nguyễn Lê Minh</span>
+                    </div>
+                    <div className='flex justify-between items-center'>
+                        <span className='min-w-[100px] text-right mr-5'>Mô tả:</span>
+                        <span className='flex-1 break-all'>Mô tả này là của modal </span>
+                    </div>
+                    <div className='flex justify-between items-center'>
+                        <span className='min-w-[100px] text-right mr-5'>Ngày đặt: </span>
+                        <span className='flex-1 break-all'>12/3/2023</span>
+                    </div>
+                    <div className='flex justify-between items-center'>
+                        <span className='min-w-[100px] text-right mr-5'>Ngày giao: </span>
+                        <span className='flex-1 break-all'>15/6/2023</span>
+                    </div>
+                    <div className='flex justify-between items-center'>
+                        <span className='min-w-[100px] text-right mr-5'>Trạng thái: </span>
+                        <span className='flex-1 break-all'>Active</span>
+                    </div>
+                    <div className='flex justify-between items-center'>
+                        <span className='min-w-[100px] text-right mr-5'>Số sản phẩm: </span>
+                        <span className='flex-1 break-all'>15</span>
+                    </div>
+                    <div className='flex justify-between items-center'>
+                        <span className='min-w-[100px] text-right mr-5'>Bao gồm: </span>
+                        <span className='flex-1 break-all'>Rau, củ, quả</span>
+                    </div>
+                    <div className='flex justify-between items-center'>
+                        <span className='min-w-[100px] text-right mr-5'>Tổng cộng: </span>
+                        <span className='flex items-center justify-start flex-1 break-all'>
+                            <span>150000</span>
+                            <TbCurrencyDong />
+                        </span>
+                    </div>
 
-            <div className='absolute bottom-0 left-0 w-full p-2'>
-                <Button type='button' outlined maxWidth>
-                    Nhận đơn
-                </Button>
+                    <ul className='w-full h-[300px] bg-black overflow-y-scroll'>
+
+                    </ul>
+                </div>
+
+                <div className='w-full p-2'>
+                    <Button type='button' outlined maxWidth>
+                        Nhận đơn
+                    </Button>
+                </div>
             </div>
         </div>
     )

@@ -9,7 +9,8 @@ import upload from "./upload.png";
 import farm from "./farm.jpg";
 import master_card from "./master_card.png";
 import empty_box from "./empty_box.png";
-import unauthorize from "./unauthorize.png"
+import unauthorize from "./unauthorize.png";
+import user_empty from "./userEmpty.png";
 
 const Images = {
     VEGE_BG: vegeTableBackground,
@@ -23,6 +24,7 @@ const Images = {
     FARM: farm,
     MASTER_CARD: master_card, 
     EMPTY_BOX: empty_box,
-    UNAUTHORIZE:  unauthorize
+    UNAUTHORIZE:  unauthorize,
+    USEREMPTY: user_empty,
 }
 export default Images;

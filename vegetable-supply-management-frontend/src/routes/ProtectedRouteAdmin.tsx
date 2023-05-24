@@ -1,6 +1,7 @@
 import React from 'react'
 import { useSelector } from 'react-redux'
 import { Navigate, useLocation } from 'react-router-dom'
+import { RootState } from 'src/redux/store'
 import { Role, User } from 'src/types/user'
 
 interface Props {
@@ -10,15 +11,16 @@ interface Props {
 
 const ProtectedRouteAdmin: React.FC<Props> = ({ children, allowedRoles }) => {
 
-    const { user } = useSelector((state: any) => state.user)
+    const user = useSelector((state: RootState) => state.user.user)
     const location = useLocation()
+    const allows = allowedRoles.map(allowRole => allowRole.id)
 
     return (
         <>
             {
-                (user as User)?.roles?.find(role => allowedRoles.find(allow => allow.id === role.id))
+                user?.roles.find(role => allows.includes(role.id)) 
                     ? children
-                    : (user as User).id !== ""
+                    : user?.id !== ''
                         ? <Navigate to="/unauthorize" state={{ from: location }} replace />
                         : <Navigate to="/admin/login" state={{ from: location }} replace />
             }

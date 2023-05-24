@@ -1,26 +1,37 @@
 import React from 'react';
 import FormInput from "../../components/form/FormInput";
-import FormSelect from 'src/components/form/FormSelect';
 import menuConfigs from 'src/configs/menu.config';
 import Button from 'src/components/common/Button';
 import SelectForm from 'src/components/form/SelectForm';
 import { AiOutlineCloseCircle } from "react-icons/ai";
-import { TbCurrencyDong } from "react-icons/tb";
 import { useToggle } from 'src/hooks/useToggle';
-import categoryApi from 'src/api/modules/category.api';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { getAllCategories } from 'src/redux/features/category/category.thunks';
-import { useAppDispatch } from 'src/redux/store';
+import { RootState, useAppDispatch } from 'src/redux/store';
 import VegetableGrid from 'src/components/common/VegetableGrid';
+import { Category } from 'src/types/category';
+import { Unit } from 'src/types/unit';
+import { getAllUnit } from 'src/redux/features/unit/unit.thunks';
+import { getAllVegetable } from 'src/redux/features/vegetable/vegetable.thunks';
+import { PageRequest } from 'src/types/base';
 
 const OrderPage = () => {
 
-  const dispatch = useAppDispatch()
-  const { loading, error, categoryDetail, listCategory } = useSelector((state: any) => state.category)
+  const dispatchThunk = useAppDispatch()
+
+  const listCategory = useSelector((state: RootState) => state.category.listCategory)
+  const listUnit = useSelector((state: RootState) => state.unit.listUnit)
 
   const [ isDropdownSearchAdvanced, setIsDropdownSearchAdvanced ] = useToggle(false);
 
   const searchBoxRef = React.useRef<HTMLDivElement>(null);
+
+  const [category, setCategory] = React.useState<Category>();
+  const [unit, setUnit] = React.useState<Unit>();
+  const [area, setArea] = React.useState<any>();
+  const [date, setDate] = React.useState<any>();
+  const [certificate, setCertificate] = React.useState<any>();
+  const [price, setPrice] = React.useState<any>();
 
   const handleDropdownSearchAdvanced = () => {
     setIsDropdownSearchAdvanced()
@@ -42,12 +53,13 @@ const OrderPage = () => {
   }, [])
 
   React.useEffect(() => {
-    const promise = dispatch(getAllCategories())
-    console.log(listCategory)
+    const categoriesPromise = dispatchThunk(getAllCategories())
+    const unitPromise = dispatchThunk(getAllUnit())
     return () => {
-      promise.abort()
+      categoriesPromise.abort()
+      unitPromise.abort()
     }
-  }, [dispatch])
+  }, [dispatchThunk])
 
 
   return (
@@ -66,18 +78,24 @@ const OrderPage = () => {
             />
             <SelectForm
               name='category'
-              options={menuConfigs.categories}
-              label='Tất cả danh mục' 
+              options={listCategory as any}
               keyValue='id'
-              keyDisplay='dataName'
+              keyDisplay='categoryName'
+              flex='row'
+              title='Tất cả danh mục'  
+              selectedOption={category}
+              onChange={(c) => setCategory(c)}
             />
 
             <SelectForm
               name='unit'
-              options={menuConfigs.categories}
-              label='Tất cả unit' 
+              options={listUnit}
               keyValue='id'
-              keyDisplay='dataName'
+              keyDisplay='unitName'
+              title='Tất cả unit'
+              flex='row'
+              selectedOption={unit}
+              onChange={(u) => setUnit(u)}
             />
           </div>
 
@@ -106,30 +124,42 @@ const OrderPage = () => {
                 <SelectForm
                   name='area'
                   options={menuConfigs.categories}
-                  label='Khu vực' 
                   keyValue='id'
                   keyDisplay='dataName'
+                  flex='row'
+                  title='Khu vực'
+                  selectedOption={area}
+                  onChange={(e) => setArea(e)}
                 />
                  <SelectForm
                   name='date'
                   options={menuConfigs.categories}
-                  label='Mới nhất' 
                   keyValue='id'
                   keyDisplay='dataName'
+                  flex='row'
+                  title='Mới nhất'
+                  selectedOption={date}
+                  onChange={(e) => setDate(e)}
                 />
                  <SelectForm
                   name='certificate'
                   options={menuConfigs.categories}
-                  label='Chứng nhận' 
                   keyValue='id'
                   keyDisplay='dataName'
+                  flex='row'
+                  title='Chứng nhận'
+                  selectedOption={certificate}
+                  onChange={(e) => setCertificate(e)}
                 />
                  <SelectForm
                   name='price'
                   options={menuConfigs.categories}
-                  label='Khoảng giá' 
                   keyValue='id'
                   keyDisplay='dataName'
+                  flex='row'
+                  title='Khoảng giá'
+                  selectedOption={price}
+                  onChange={(e) => setPrice(e)}
                 />
               </div>
               <div className='w-max flex items-center'>

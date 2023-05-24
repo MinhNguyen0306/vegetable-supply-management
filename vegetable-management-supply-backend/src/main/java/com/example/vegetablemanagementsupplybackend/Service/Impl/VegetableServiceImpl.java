@@ -6,6 +6,7 @@ import com.example.vegetablemanagementsupplybackend.DTO.ResponsePayload.Vegetabl
 import com.example.vegetablemanagementsupplybackend.DTO.VegetableDto;
 import com.example.vegetablemanagementsupplybackend.Entity.*;
 import com.example.vegetablemanagementsupplybackend.Enum.ProviderStatusEnum;
+import com.example.vegetablemanagementsupplybackend.Enum.VegetableFilterEnum;
 import com.example.vegetablemanagementsupplybackend.Exception.DuplicateException;
 import com.example.vegetablemanagementsupplybackend.Exception.ResourceNotFoundException;
 import com.example.vegetablemanagementsupplybackend.Exception.UploadFileException;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -56,7 +58,7 @@ public class VegetableServiceImpl implements VegetableService {
     public VegetableDto createVegetable(
             String providerId,
             Integer categoryId,
-            Integer unitId,
+            List<String> unitName,
             MultipartFile[] files,
             String uploadTo,
             VegetableDto vegetableDto
@@ -65,8 +67,16 @@ public class VegetableServiceImpl implements VegetableService {
                 .orElseThrow(() -> new ResourceNotFoundException("Provider", "Id", providerId));
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "Id", categoryId));
-        Unit unit = unitRepository.findById(unitId)
-                .orElseThrow(() -> new ResourceNotFoundException("unit", "Id", unitId));
+//        Unit unit = unitRepository.findById(unitId)
+//                .orElseThrow(() -> new ResourceNotFoundException("unit", "Id", unitId));
+        List<Unit> savedUnits = null;
+        if(unitName.isEmpty()) {
+            return null;
+        } else {
+            List<Unit> units = new ArrayList<>();
+            unitName.forEach(u -> units.add(Unit.builder().unitName(u).build()));
+            savedUnits = this.unitRepository.saveAll(units);
+        }
 
         // Convert vegetable sang vegetableDto
         Vegetable vegetable = vegetableConverter.dtoToVegetable(vegetableDto);
@@ -86,7 +96,7 @@ public class VegetableServiceImpl implements VegetableService {
         }
         vegetable.setProvider(provider);
         vegetable.setCategory(category);
-        vegetable.setUnit(unit);
+        vegetable.setUnits(savedUnits);
         Vegetable savedVegetable = this.vegetableRepository.save(vegetable);
 
         // Thực hiện lưu trữ ảnh của sản phẩm
@@ -132,7 +142,6 @@ public class VegetableServiceImpl implements VegetableService {
         vegetable.setVegetableName(vegetableConverted.getVegetableName());
         vegetable.setCurrentPricing(vegetableConverted.getCurrentPricing());
         vegetable.setCategory(vegetableConverted.getCategory());
-        vegetable.setUnit(vegetableConverted.getUnit());
         vegetable.setCertificates(vegetableConverted.getCertificates());
         Vegetable updatedVegetable = this.vegetableRepository.save(vegetable);
         return vegetableConverter.vegetableToDto(updatedVegetable);
@@ -144,7 +153,6 @@ public class VegetableServiceImpl implements VegetableService {
                 .orElseThrow(() -> new ResourceNotFoundException("Vegetable", "Id", vegetableId));
         return vegetableConverter.vegetableToDto(vegetable);
     }
-
     @Override
     public VegetableResponse getAllVegetables(
         Integer pageNumber,
@@ -163,7 +171,7 @@ public class VegetableServiceImpl implements VegetableService {
         VegetableResponse response = new VegetableResponse();
         response.setPageNumber(pageNumber);
         response.setPageSize(pageSize);
-        response.setVegetableDtoList(vegetableDtoList);
+        response.setContent(vegetableDtoList);
         response.setTotalElements(page.getTotalElements());
         response.setTotalPages(page.getTotalPages());
         response.setLastPage(page.isLast());
@@ -189,7 +197,7 @@ public class VegetableServiceImpl implements VegetableService {
         VegetableResponse response = new VegetableResponse();
         response.setPageNumber(pageNumber);
         response.setPageSize(pageSize);
-        response.setVegetableDtoList(vegetableDtoList);
+        response.setContent(vegetableDtoList);
         response.setTotalElements(page.getTotalElements());
         response.setTotalPages(page.getTotalPages());
         response.setLastPage(page.isLast());
@@ -215,7 +223,7 @@ public class VegetableServiceImpl implements VegetableService {
         VegetableResponse response = new VegetableResponse();
         response.setPageNumber(pageNumber);
         response.setPageSize(pageSize);
-        response.setVegetableDtoList(vegetableDtoList);
+        response.setContent(vegetableDtoList);
         response.setTotalElements(page.getTotalElements());
         response.setTotalPages(page.getTotalPages());
         response.setLastPage(page.isLast());
@@ -224,9 +232,48 @@ public class VegetableServiceImpl implements VegetableService {
     }
 
     @Override
+    public VegetableResponse getVegetablesByType(
+        String providerId, VegetableFilterEnum type, Integer pageNumber, Integer pageSize, String sortBy, String sortDir
+    ) {
+        Sort sort = sortDir.equalsIgnoreCase("asc") ?
+                Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
+        Page<Vegetable> page = this.vegetableRepository.findAll(pageable);;
+        if(type.equals(VegetableFilterEnum.ACTIVE)) {
+            page = this.vegetableRepository.getVegetablesUnLock(providerId, pageable);
+        } else if(type.equals(VegetableFilterEnum.DISABLE)) {
+            page = this.vegetableRepository.getVegetablesLock(providerId, pageable);
+        }
+
+        List<Vegetable> vegetables = page.getContent();
+        List<VegetableDto> vegetableDtoList = vegetableConverter.vegetablesToDto(vegetables);
+
+        VegetableResponse response = new VegetableResponse();
+        response.setPageNumber(pageNumber);
+        response.setPageSize(pageSize);
+        response.setContent(vegetableDtoList);
+        response.setTotalElements(page.getTotalElements());
+        response.setTotalPages(page.getTotalPages());
+        response.setLastPage(page.isLast());
+        return response;
+    }
+
+    @Override
     public void deleteVegetable(String vegetableId) {
         Vegetable vegetable = this.vegetableRepository.findById(vegetableId)
                 .orElseThrow(() -> new ResourceNotFoundException("Vegetable", "Id", vegetableId));
         this.vegetableRepository.delete(vegetable);
+    }
+
+    @Override
+    public void lockVegetable(String vegetableId) {
+        Vegetable vegetable = this.vegetableRepository.findById(vegetableId)
+                .orElseThrow(() -> new ResourceNotFoundException("Vegetable", "Id", vegetableId));
+        if(vegetable.isLock()) {
+            vegetable.setLock(false);
+        } else {
+            vegetable.setLock(true);
+        }
+        this.vegetableRepository.save(vegetable);
     }
 }

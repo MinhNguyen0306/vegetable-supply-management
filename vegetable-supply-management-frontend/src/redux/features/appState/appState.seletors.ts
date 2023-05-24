@@ -3,6 +3,7 @@ interface AppStateSlice {
     successMessage: string,
     errorMessage: string
     openOrderSidebar: boolean
+    openOrderConfirm: boolean
     modalLoading: boolean
     globalLoading: boolean 
     themeMode: 'light' | 'dark'
@@ -13,6 +14,7 @@ const initialState: AppStateSlice = {
     successMessage: "",
     errorMessage: "",
     openOrderSidebar: false,
+    openOrderConfirm: false,
     modalLoading: false,
     globalLoading: false,
     themeMode: 'light'

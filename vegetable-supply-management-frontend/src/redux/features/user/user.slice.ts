@@ -11,17 +11,17 @@ export const userSlice = createSlice({
             if(action.payload === null) {
                 localStorage.removeItem("access_token");
             } else {
-                if(action.payload.access_token) 
-                    localStorage.setItem("access_token", action.payload.access_token)
+                if(action.payload.tokens) 
+                    localStorage.setItem("access_token", action.payload.tokens.access_token)
             }
             state.user = action.payload.user
         },
         setIsAuthenticated: (state, action) => {
             state.isAuthenticated = action.payload
         },
-        logout: (state, action) => {
-            state.user = null
-            state.isAuthenticated = false
+        userLogout: (state, action) => {
+            state.error = undefined
+            state.user = initialState.user
             localStorage.removeItem('access_token')
         }
     },
@@ -48,7 +48,7 @@ export const userSlice = createSlice({
 export const {
     setUser ,
     setIsAuthenticated,
-    logout
+    userLogout
 } = userSlice.actions;
 
 export default userSlice.reducer;

@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class VegetableResponse {
-    private List<VegetableDto> vegetableDtoList;
+    private List<VegetableDto> content;
     private int pageNumber;
     private int pageSize;
     private long totalElements;

@@ -6,14 +6,17 @@ import { useToggle } from 'src/hooks/useToggle';
 interface Props {
     name: string;
     isRequired?: boolean;
-    label: string;
+    label?: string;
+    title: string,
     variant?: 'standard' | 'contained' | 'outlined'
     options: any[];
     keyValue: string | number;
     keyDisplay: string; 
     disable?: boolean;
-    size?: 'small' | 'medium';
-    handleChange?: () => void;
+    selectedOption: any 
+    flex: 'row' | 'col'
+    size?: 'small' | 'medium' | 'full';
+    onChange: (option: any) => void 
 }
 
 
@@ -22,23 +25,25 @@ const SelectForm = (props: Props) => {
         name, 
         isRequired, 
         label, 
+        title,
         variant, 
+        selectedOption,
         options, 
         keyValue, 
-        keyDisplay, 
+        keyDisplay,
+        flex,
         disable = false, 
         size, 
-        handleChange 
+        onChange
     } = props;
 
-    const [selectedOption, setSelectedOption] = useState<any>(null);
-    let isDropdown = React.useRef<boolean>(false)
 
     const selectFormRef = useRef<HTMLDivElement>(null);
-    const ulRef = useRef<HTMLUListElement>(null)
+    const ulRef = useRef<HTMLUListElement>(null);
+    let spanRef = useRef<HTMLSpanElement>(null);
 
     const handleSelectOption = (option: any) => {
-        setSelectedOption(option)
+        onChange(option)
     }
 
     React.useEffect(() => {
@@ -73,38 +78,46 @@ const SelectForm = (props: Props) => {
 
     return (
         <div 
-            className={`${ disable ? "pointer-events-none opacity-50" : "" } relative flex flex-col gap-1 w-full cursor-pointer`}
+            className={`${flex === 'col' ? "flex-col gap-2" : "gap-5"} ${ disable ? "pointer-events-none opacity-50" : "" } 
+            flex relative w-full cursor-pointer`}
         >
+            {
+                label && (
+                    <label className={`min-w-[120px] ${flex === 'col'? "text-left" : "text-right"}`}>
+                        { isRequired && <span className='text-red-600 font-extrabold'>* </span> }
+                        { label }
+                    </label>
+                )
+            }
             {/* Selection Box */}
-            <div ref={selectFormRef} className="w-auto h-full flex justify-end items-center p-1 border-2 bg-white border-gray-200 
-            hover:border-gray-300"
+            <div ref={selectFormRef} className="relative w-full h-full flex justify-end items-center p-1 border-2 bg-white 
+            border-gray-200 hover:border-gray-300"
             >
-                <span className='px-4 w-full text-left'>{ selectedOption ? selectedOption[keyDisplay] : label }</span>
+                <span ref={spanRef} className='px-4 w-full text-left'>{ selectedOption ? selectedOption[keyDisplay] : title }</span>
                 <div>
                     <IoMdArrowDropdown />
                 </div>
-            </div>
-
-            {/* Dropdown Select Option */}
-            <ul 
-                ref={ulRef}
-                className={`hidden absolute top-full left-0 mt-1 z-50 bg-white
-                justify-start w-full h-max shadow-xl rounded-sm`}
-            >
-                {
-                    options.length && options.map((option, index) => (
-                        <OptionItem 
-                            key={index}
-                            display={option[keyDisplay]}
-                            value={option[keyValue]}
-                            handleSelected={() => handleSelectOption(option)}
-                            isSelected={selectedOption === option ? true : false}
-                        />
-                    ))
-                    
-                }
-            </ul>
-            {/* End Dropdown Select Option */}
+                {/* Dropdown Select Option */}
+                <ul 
+                    ref={ulRef}
+                    className={`hidden absolute top-full left-0 mt-1 z-50 bg-white
+                    justify-start w-full h-max shadow-lg rounded-sm max-h-[150px] overflow-y-scroll`}
+                >
+                    {
+                        options.length > 0 && options.map((option, index) => (
+                            <OptionItem 
+                                key={index}
+                                display={option[keyDisplay]}
+                                value={option[keyValue]}
+                                handleSelected={() => handleSelectOption(option)}
+                                isSelected={selectedOption === option ? true : false}
+                            />
+                        ))
+                        
+                    }
+                </ul>
+                {/* End Dropdown Select Option */}
+            </div>            
         </div>
     )
 }

@@ -1,10 +1,7 @@
 export interface Mart {
-    id: string,
-    name: string,
-    address: string,
-    phone: string,
-    email: string,
-    fax?: number,
+    id: string | null,
+    martName: string | null,
+    faxCode: number | null,
 }
 
 export interface IMartPayload extends Mart {

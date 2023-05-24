@@ -149,10 +149,11 @@ const ManageDeliveryContainer = () => {
                                         <td className='p-4 text-center'>
                                             <SelectForm 
                                                 name='action'
-                                                label='Thao tác'
                                                 options={actions}
                                                 keyValue="value"
                                                 keyDisplay='display'
+                                                flex='row'
+                                                title='Thao tác'
                                             />
                                         </td>
                                     </tr>
