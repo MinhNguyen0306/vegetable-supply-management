@@ -1,5 +1,7 @@
 package com.example.vegetablemanagementsupplybackend.DTO;
 
+import com.example.vegetablemanagementsupplybackend.Entity.User;
+import com.example.vegetablemanagementsupplybackend.Enum.ProviderStatusEnum;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -13,4 +15,6 @@ public class ProviderDto {
     private String productionArea;
     private String annualOutput;
     private Date yearActive;
+    private ProviderStatusEnum status;
+    private User user;
 }

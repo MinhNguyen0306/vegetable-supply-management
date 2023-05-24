@@ -5,7 +5,7 @@ import { Order, OrderPayload, OrderTemporary } from 'src/types/order'
 import Button from '../Button'
 import { useDispatch, useSelector } from 'react-redux'
 import { RootState, useAppDispatch } from 'src/redux/store'
-import { setOpenOrderConfirm, setSuccessMessage } from 'src/redux/features/appState/appState.slice'
+import { setErrorMessage, setOpenOrderConfirm, setSuccessMessage } from 'src/redux/features/appState/appState.slice'
 import { createOrder } from 'src/redux/features/order/order.thunks'
 import { clearOrderTemporary } from 'src/redux/features/order/order.slice'
 
@@ -33,6 +33,8 @@ const OrderConfirmModal = ({data}: {data: OrderTemporary}) => {
             if(promise.payload) {
                 dispatch(clearOrderTemporary)
                 dispatch(setSuccessMessage("Đặt hàng thành công"))
+            } else {
+                dispatch(setErrorMessage("Lỗi yêu cầu"))
             }
         }
         dispatch(setOpenOrderConfirm(false))

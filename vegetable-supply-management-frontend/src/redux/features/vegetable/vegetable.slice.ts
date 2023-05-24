@@ -5,7 +5,8 @@ import {
     getVegetableById,
     createVegetable,
     getVegetablesByProvider,
-    getVegetablesOfProviderByType
+    getVegetablesOfProviderByType,
+    getVegetablesByKeySearch
 } from "./vegetable.thunks"
 
 const vegetableSlice = createSlice({
@@ -36,6 +37,19 @@ const vegetableSlice = createSlice({
                 state.listVegetable = action.payload
             })
             .addCase(getAllVegetable.rejected, (state, action) => {
+                state.loading = false
+                state.error = action.error
+            })
+            
+            .addCase(getVegetablesByKeySearch.pending, (state, action) => {
+                state.loading = true
+            })
+            .addCase(getVegetablesByKeySearch.fulfilled, (state, action) => {
+                state.loading = false
+                console.log(action.payload)
+                state.listVegetable = action.payload
+            })
+            .addCase(getVegetablesByKeySearch.rejected, (state, action) => {
                 state.loading = false
                 state.error = action.error
             })

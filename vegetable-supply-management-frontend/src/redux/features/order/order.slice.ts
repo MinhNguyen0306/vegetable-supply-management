@@ -6,7 +6,8 @@ import {
     getOrdersrOfMart,
     getOrdersrOfMartByStatus,
     createOrder,
-    getOrderById
+    getOrderById,
+    resolveOrder
 } from "./order.thunks"
 import { OrderItem } from "src/types/orderitem";
 
@@ -118,6 +119,21 @@ const orderSlice = createSlice({
                 state.orderDetail = action.payload
             })
             .addCase(createOrder.rejected, (state, action) => {
+                state.loading = false
+                state.error = action.error
+            })
+
+            .addCase(resolveOrder.pending, (state, action) => {
+                state.loading = true
+            })
+            .addCase(resolveOrder.fulfilled, (state, action) => {
+                state.loading = false
+                const item = state.listOrder.content.indexOf(action.payload)
+                if(item) {
+                    state.listOrder.content[item] = action.payload
+                }
+            })
+            .addCase(resolveOrder.rejected, (state, action) => {
                 state.loading = false
                 state.error = action.error
             })

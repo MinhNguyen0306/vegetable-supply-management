@@ -1,6 +1,10 @@
 package com.example.vegetablemanagementsupplybackend.Entity;
 
+import com.example.vegetablemanagementsupplybackend.Util.CustomAuthorityDeserializer;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,6 +25,11 @@ import java.util.stream.Collectors;
 @Data
 @NoArgsConstructor @AllArgsConstructor
 @Builder
+@JsonIdentityInfo(
+    scope = User.class,
+    generator = ObjectIdGenerators.PropertyGenerator.class,
+    property = "id"
+)
 public class User implements UserDetails {
     @Id
     @GeneratedValue(generator = "UUID")
@@ -54,6 +63,7 @@ public class User implements UserDetails {
     private Set<Role> roles = new HashSet<>();
 
     @Override
+    @JsonDeserialize(using = CustomAuthorityDeserializer.class)
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles.stream().map(role -> new SimpleGrantedAuthority(role.getName())).collect(Collectors.toList());
     }

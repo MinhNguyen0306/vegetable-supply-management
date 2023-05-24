@@ -67,8 +67,7 @@ public class VegetableServiceImpl implements VegetableService {
                 .orElseThrow(() -> new ResourceNotFoundException("Provider", "Id", providerId));
         Category category = categoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Category", "Id", categoryId));
-//        Unit unit = unitRepository.findById(unitId)
-//                .orElseThrow(() -> new ResourceNotFoundException("unit", "Id", unitId));
+
         List<Unit> savedUnits = null;
         if(unitName.isEmpty()) {
             return null;

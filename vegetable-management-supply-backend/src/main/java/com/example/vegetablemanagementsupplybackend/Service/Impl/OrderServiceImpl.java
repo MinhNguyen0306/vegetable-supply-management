@@ -47,6 +47,7 @@ public class OrderServiceImpl implements OrderService {
         Order order = converter.dtoToOrder(orderDto);
         order.setOrderDate(Date.from(Instant.now()));
         order.setMart(mart);
+        order.setOrderStatus(OrderStatusEnum.PENDING);
         Order savedOrder = this.orderRepository.save(order);
         List<OrderItem> orderItems = savedOrder.getOrderItems();
         if(orderItems.isEmpty() && orderItems != null) {
@@ -60,31 +61,28 @@ public class OrderServiceImpl implements OrderService {
                     orderItem.setOrder(savedOrder);
                 }
             }
+            this.orderItemRepository.saveAll(orderItems);
         }
         return converter.orderToDto(savedOrder);
     }
 
     @Override
-    public ChangeStatusResponse resolveOrder(String orderId, OrderStatusEnum typeResolve) {
+    public OrderDto resolveOrder(String orderId, OrderStatusEnum typeResolve) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order", "Id", orderId));
         OrderStatusEnum orderStatusEnum = order.getOrderStatus();
         if(orderStatusEnum.equals(OrderStatusEnum.PENDING)) {
             if(typeResolve.equals(OrderStatusEnum.RESOLVE)) {
                 order.setOrderStatus(typeResolve);
-                this.orderRepository.save(order);
+                Order updatedOrder = this.orderRepository.save(order);
+                return converter.orderToDto(updatedOrder);
             } else if(typeResolve.equals(OrderStatusEnum.REJECT)) {
                 order.setOrderStatus(OrderStatusEnum.REJECT);
-                this.orderRepository.save(order);
-            } else {
-                return new ChangeStatusResponse("failed",
-                        orderStatusEnum.name(), OrderStatusEnum.RESOLVE.name());
+                Order updatedOrder = this.orderRepository.save(order);
+                return converter.orderToDto(updatedOrder);
             }
-            return new ChangeStatusResponse("success",
-                    orderStatusEnum.name(), OrderStatusEnum.RESOLVE.name());
         }
-        return new ChangeStatusResponse("failed",
-                orderStatusEnum.name(), OrderStatusEnum.RESOLVE.name());
+        return converter.orderToDto(order);
     }
 
     @Override
@@ -144,7 +142,7 @@ public class OrderServiceImpl implements OrderService {
         List<OrderDto> orderDtoList = converter.ordersToDto(orders);
 
         OrderResponse orderResponse = new OrderResponse();
-        orderResponse.setOrderDtoList(orderDtoList);
+        orderResponse.setContent(orderDtoList);
         orderResponse.setPageNumber(pageNumber);
         orderResponse.setPageSize(pageSize);
         orderResponse.setTotalPages(orderPage.getTotalPages());
@@ -170,7 +168,7 @@ public class OrderServiceImpl implements OrderService {
         List<OrderDto> orderDtoList = converter.ordersToDto(orders);
 
         OrderResponse orderResponse = new OrderResponse();
-        orderResponse.setOrderDtoList(orderDtoList);
+        orderResponse.setContent(orderDtoList);
         orderResponse.setPageNumber(pageNumber);
         orderResponse.setPageSize(pageSize);
         orderResponse.setTotalPages(orderPage.getTotalPages());
@@ -196,7 +194,7 @@ public class OrderServiceImpl implements OrderService {
         List<OrderDto> orderDtoList = converter.ordersToDto(orders);
 
         OrderResponse orderResponse = new OrderResponse();
-        orderResponse.setOrderDtoList(orderDtoList);
+        orderResponse.setContent(orderDtoList);
         orderResponse.setPageNumber(pageNumber);
         orderResponse.setPageSize(pageSize);
         orderResponse.setTotalPages(orderPage.getTotalPages());
@@ -222,7 +220,7 @@ public class OrderServiceImpl implements OrderService {
         List<OrderDto> orderDtoList = converter.ordersToDto(orders);
 
         OrderResponse orderResponse = new OrderResponse();
-        orderResponse.setOrderDtoList(orderDtoList);
+        orderResponse.setContent(orderDtoList);
         orderResponse.setPageNumber(pageNumber);
         orderResponse.setPageSize(pageSize);
         orderResponse.setTotalPages(orderPage.getTotalPages());

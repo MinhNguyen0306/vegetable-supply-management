@@ -1,5 +1,6 @@
 package com.example.vegetablemanagementsupplybackend.DTO;
 
+import com.example.vegetablemanagementsupplybackend.Entity.Provider;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
@@ -26,7 +27,9 @@ public class UserDto {
 
     @Pattern(regexp = "/(84[3|5|7|8|9])+([0-9]{8})\\b/g")
     private String phone;
-    private ProviderDto provider;
+
+    private Provider provider;
+
     private MartDto mart;
-    private Set<RoleDto> roleDtoSet;
+    private Set<RoleDto> roles;
 }

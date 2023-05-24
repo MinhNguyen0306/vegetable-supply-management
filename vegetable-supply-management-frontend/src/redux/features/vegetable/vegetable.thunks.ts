@@ -21,6 +21,7 @@ const vegetableEndpoints = {
         pageSize: number
     ) => `vegetable/provider/${providerId}/type/${type}?pageNumber=${pageNumber}&pageSize=${pageSize}`,
     getById: (vegetableId: string) => `vegetable/${vegetableId}`,
+    getByKeySearch: (key: string, pageNumber: number, pageSize: number) => `vegetable/search/${key}?pageNumber=${pageNumber}&pageSize=${pageSize}`,
 }
 
 export const createVegetable = createAsyncThunk<
@@ -84,6 +85,28 @@ export const getVegetableById = createAsyncThunk<
     ) => {
         const response: VegetableDetail = await publicClient.get(
             vegetableEndpoints.getById(vegetableId),
+            { signal: thunkAPI.signal }
+        )
+
+        return response;
+    }
+)
+
+export const getVegetablesByKeySearch = createAsyncThunk<
+    ListVegetableResponse,
+    {
+        key: string,
+        pageNumber: number,
+        pageSize: number
+    }
+>(
+    "vegetable/getVegetablesByKeySearch",
+    async (
+        { key, pageNumber, pageSize },
+        thunkAPI
+    ) => {
+        const response: ListVegetableResponse = await publicClient.get(
+            vegetableEndpoints.getByKeySearch(key, pageNumber, pageSize),
             { signal: thunkAPI.signal }
         )
 

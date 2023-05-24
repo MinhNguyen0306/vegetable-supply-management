@@ -28,32 +28,14 @@ const OrderDetailPage = () => {
     return (
         <div className='relative w-[1000px] m-auto min-h-screen bg-white'>
             <div className='p-5'>
-                <div className='flex items-center justify-between'>
+                <div className='flex items-center justify-between mb-5'>
                     <h1 className='font-bold text-black text-3xl'>Chi tiết đơn hàng</h1>
                     <span  
+                        onClick={() => navigate(-1)}
                         className='hover:opacity-80 flex gap-2 items-center justify-end cursor-pointer'
                     >
                         <IoIosArrowBack />
                         <span>Về trang trước</span>
-                    </span>
-                </div>
-                
-                <div className='grid grid-cols-2 justify-between'>
-                    <span className='hover:opacity-80 flex gap-2 items-center justify-start cursor-pointer'>
-                        <span>Mã đơn: </span>
-                        <span>{ orderDetail.id }</span>
-                    </span>
-                    <span className='hover:opacity-80 flex gap-2 items-center justify-end cursor-pointer'>
-                        <span>Ngày đặt: </span>
-                        <span>{ orderDetail.orderDate }</span>
-                    </span>
-                    <span className='hover:opacity-80 flex gap-2 items-center justify-start cursor-pointer'>
-                        <span>Đặt bởi: </span>
-                        <span>{ orderDetail.mart.martName }</span>
-                    </span>
-                    <span className='hover:opacity-80 flex gap-2 items-center justify-end cursor-pointer'>
-                        <span>Ngày giao: </span>
-                        <span>{ orderDetail.deliveryDate }</span>
                     </span>
                 </div>
 
@@ -204,6 +186,14 @@ const OrderDetailPage = () => {
                                 <div className='flex justify-between items-center'>
                                     <span>Tên siêu thị: </span>
                                     <span>{ orderDetail.mart.martName }</span>
+                                </div>
+                                <div className='flex justify-between items-center'>
+                                    <span>Địa chỉ: </span>
+                                    <span>{ orderDetail.mart.martName }</span>
+                                </div>
+                                <div className='flex justify-between items-center'>
+                                    <span>Liên lạc: </span>
+                                    <span>{ orderDetail.mart.faxCode }</span>
                                 </div>
                             </div>
                         </div>

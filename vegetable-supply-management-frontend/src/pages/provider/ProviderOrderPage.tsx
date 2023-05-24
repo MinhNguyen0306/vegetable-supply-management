@@ -66,7 +66,7 @@ const optionFilter: SortBy[] = [
   },
 ]
 
-const OrderPage = () => {
+const ProviderOrderPage = () => {
 
   const dispatch = useDispatch();
   const dispatchThunk = useAppDispatch();
@@ -178,4 +178,4 @@ const OrderPage = () => {
   )
 }
 
-export default OrderPage
+export default ProviderOrderPage

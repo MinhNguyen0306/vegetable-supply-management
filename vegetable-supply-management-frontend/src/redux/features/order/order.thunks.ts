@@ -1,34 +1,33 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import publicClient from "src/api/configs/publicClient";
 import { AllOrderResponse, CreateOrderRequest, Order, OrderDetail, OrderPayload, OrderStatus } from "src/types/order";
-import { PageRequest } from "src/types/base";
+import { ChangeStatusResponse, PageRequest } from "src/types/base";
 import privateClient from "src/api/configs/privateClient";
 
 const orderEndpoints = {
     getAll: ({ 
         pageNumber, pageSize, sortBy, sortDir }: PageRequest
-    ) => `order/list/all?pageNumber=${pageNumber}&pageSize=${pageSize}&sortBy=${sortBy}&sortBy=${sortDir}`,
+    ) => `order/list/all?pageNumber=${pageNumber}&pageSize=${pageSize}&sortBy=${sortBy}&sortDir=${sortDir}`,
     getById: (orderId: string) => `order/${orderId}`,
     filterByStatus: (
         status: OrderStatus, 
         { pageNumber, pageSize, sortBy, sortDir }: PageRequest
-    ) => `order/list?status=${status}&pageNumber=${pageNumber}&pageSize=${pageSize}&sortBy=${sortBy}&sortBy=${sortDir}`,
+    ) => `order/list?status=${status}&pageNumber=${pageNumber}&pageSize=${pageSize}&sortBy=${sortBy}&sortDir=${sortDir}`,
     getAllOfMart: (
         martId: string,
         { pageNumber, pageSize, sortBy, sortDir }: PageRequest
-    ) => `order/mart/${martId}?pageNumber=${pageNumber}&pageSize=${pageSize}&sortBy=${sortBy}&sortBy=${sortDir}`,
+    ) => `order/mart/${martId}?pageNumber=${pageNumber}&pageSize=${pageSize}&sortBy=${sortBy}&sortDir=${sortDir}`,
     getAllOfMartByStatus: (
         martId: string,
         status: OrderStatus,
         { pageNumber, pageSize, sortBy, sortDir }: PageRequest
-    ) => `order/mart/${martId}?status=${status}&pageNumber=${pageNumber}&pageSize=${pageSize}&sortBy=${sortBy}&sortBy=${sortDir}`,
+    ) => `order/mart/${martId}?status=${status}&pageNumber=${pageNumber}&pageSize=${pageSize}&sortBy=${sortBy}&sortDir=${sortDir}`,
     create: (
         martId: string, 
     ) => `order?martId=${martId}`,
     resolve: (
-        orderId: string,
-        status: OrderStatus
-    ) => `order/resolve/${orderId}?status=${status}`,
+        {orderId, typeResolve}: {orderId: string, typeResolve: OrderStatus}
+    ) => `order/resolve/${orderId}?status=${typeResolve}`,
     cancel: (
         orderId: string
     ) => `order/cancel/${orderId}`,
@@ -166,6 +165,25 @@ export const createOrder = createAsyncThunk<
         const response: OrderDetail = await privateClient.post(
             orderEndpoints.create(martId),
             payload
+        )
+
+        return response;
+    }
+)
+
+export const resolveOrder = createAsyncThunk<
+    OrderDetail, 
+    {
+        orderId: string,
+        typeResolve: OrderStatus
+    }
+>(
+    "order/resolveOrder",
+    async (
+        { orderId, typeResolve }
+    ) => {
+        const response: OrderDetail = await privateClient.patch(
+            orderEndpoints.resolve({ orderId, typeResolve })
         )
 
         return response;

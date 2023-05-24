@@ -16,6 +16,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor @AllArgsConstructor
 @JsonIdentityInfo(
+    scope = Unit.class,
     generator = ObjectIdGenerators.PropertyGenerator.class,
     property = "id"
 )
@@ -25,7 +26,6 @@ public class Unit {
     @Column(name = "id_unit")
     private int id;
 
-    @Column(unique = true)
     private String unitName;
 
     // Edit field

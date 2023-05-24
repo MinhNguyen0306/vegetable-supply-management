@@ -34,13 +34,10 @@ const sidebarProviderNav: ISidebar[] = [
                 path: "/provider/product/add-product"
             },
             {
-                title: "Sản phẩm không chuẩn",
+                title: "Sản phẩm không đạt",
                 path: "/provider/product/standard"
             },
-            {
-                title: "Cài đặt sản phẩm",
-                path: "/provider/setting"
-            }
+
         ]
     },
     {

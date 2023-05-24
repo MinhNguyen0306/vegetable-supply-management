@@ -1,6 +1,7 @@
 package com.example.vegetablemanagementsupplybackend.DTO;
 
 import com.example.vegetablemanagementsupplybackend.Entity.Mart;
+import com.example.vegetablemanagementsupplybackend.Entity.OrderItem;
 import com.example.vegetablemanagementsupplybackend.Enum.OrderStatusEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,5 +20,5 @@ public class OrderDto {
     private Date deliveryDate;
     private OrderStatusEnum orderStatus;
     private Mart mart;
-    private List<OrderItemDto> orderItems;
+    private List<OrderItem> orderItems;
 }

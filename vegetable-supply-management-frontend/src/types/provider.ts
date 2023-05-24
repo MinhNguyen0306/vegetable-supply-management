@@ -1,15 +1,19 @@
 import { IPerson } from './person';
 import { Certification } from './certification';
+import { User } from './user';
 
-export interface Provider extends IPerson{
-    id_provider: string;
-    active_year: number;
-    production_area?: string;
-    anual_output?: string;
-    total_category?: number;
+export type ProviderStatus = 'PENDING' | 'ACTIVE' | 'INACTIVE'
+
+export interface Provider{
+    id: string;
+    providerName: string
+    productionArea?: string;
+    anualOutput?: string;
     logo?: string;
     cover_logo?: string;
-    active_status?: string;
+    yearActive: string;
+    status: ProviderStatus
+    user: User
     certificationList: Certification[];
 }
 

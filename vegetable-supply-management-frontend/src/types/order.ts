@@ -12,7 +12,7 @@ export interface OrderDetail {
     description?: string,
     orderDate: string,
     deliveryDate: string,
-    orderStatus: string | number,
+    orderStatus: OrderStatus
     mart: Mart
     orderItems: OrderItemDetail[]
 }
@@ -35,7 +35,7 @@ export interface OrderTemporary {
 }
 
 export interface AllOrderResponse {
-    content: Order[],
+    content: OrderDetail[],
     pageNumber: number,
     pageSize: number,
     totalElements: number,

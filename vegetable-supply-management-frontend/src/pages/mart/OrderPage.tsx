@@ -12,7 +12,7 @@ import VegetableGrid from 'src/components/common/VegetableGrid';
 import { Category } from 'src/types/category';
 import { Unit } from 'src/types/unit';
 import { getAllUnit } from 'src/redux/features/unit/unit.thunks';
-import { getAllVegetable } from 'src/redux/features/vegetable/vegetable.thunks';
+import { getAllVegetable, getVegetablesByKeySearch } from 'src/redux/features/vegetable/vegetable.thunks';
 import { PageRequest } from 'src/types/base';
 
 const OrderPage = () => {
@@ -26,15 +26,22 @@ const OrderPage = () => {
 
   const searchBoxRef = React.useRef<HTMLDivElement>(null);
 
+  const [searchKey, setSearchKey] = React.useState<string>("");
   const [category, setCategory] = React.useState<Category>();
   const [unit, setUnit] = React.useState<Unit>();
   const [area, setArea] = React.useState<any>();
   const [date, setDate] = React.useState<any>();
   const [certificate, setCertificate] = React.useState<any>();
   const [price, setPrice] = React.useState<any>();
+  const [pageNumber, setPageNumber] = React.useState<number>(0);
+  const [pageSize, setPageSize] = React.useState<number>(4);
 
   const handleDropdownSearchAdvanced = () => {
     setIsDropdownSearchAdvanced()
+  }
+
+  function handleSearch() {
+    dispatchThunk(getVegetablesByKeySearch({key: searchKey, pageNumber: pageNumber, pageSize: pageSize}))
   }
 
   React.useEffect(() => {
@@ -69,12 +76,12 @@ const OrderPage = () => {
         {/* Box Search Container */}
         <div className='flex gap-2 w-[95%] mx-auto items-center'>
           <div className='grid grid-cols-3 flex-1 items-center gap-2'>
-            <FormInput 
-              id='search'
-              name='search'
+            <input
               type='text'
-              placeholder='Tìm kiếm sản phẩm...'
-              rounded='small'
+              placeholder='Tìm kiếm sản phẩm'
+              value={searchKey}
+              onChange={(e) => setSearchKey(e.target.value)}
+              className='h-[32px] px-2 outline-none text-black'
             />
             <SelectForm
               name='category'
@@ -100,7 +107,11 @@ const OrderPage = () => {
           </div>
 
           <div className='flex flex-2 gap-2'>
-            <Button type='button' rounded>
+            <Button 
+              type='button' 
+              rounded
+              onClick={handleSearch}
+            >
               Tìm kiếm
             </Button>
             <Button

@@ -1,15 +1,15 @@
 package com.example.vegetablemanagementsupplybackend.Converter.EnumConverter;
 
-import com.example.vegetablemanagementsupplybackend.Enum.OrderStatusEnum;
+import com.example.vegetablemanagementsupplybackend.Enum.ProviderStatusEnum;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
 @Component
-public class OrderStatusConverter implements Converter<String, OrderStatusEnum> {
+public class ProviderStatusConverter implements Converter<String, ProviderStatusEnum> {
     @Override
-    public OrderStatusEnum convert(String source) {
+    public ProviderStatusEnum convert(String source) {
         try {
-            return OrderStatusEnum.valueOf(source.toUpperCase());
+            return ProviderStatusEnum.valueOf(source.toUpperCase());
         } catch (IllegalArgumentException e) {
             return null;
         }

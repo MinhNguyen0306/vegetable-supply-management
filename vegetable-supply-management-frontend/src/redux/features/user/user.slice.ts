@@ -1,6 +1,6 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import initialState from "./user.selectors";
-import { login } from "./user.thunks";
+import { getAllProviders, getProvidersByStatus, login, resolveProviderSignup } from "./user.thunks";
 import { useDispatch } from "react-redux";
 
 export const userSlice = createSlice({
@@ -42,6 +42,43 @@ export const userSlice = createSlice({
                 state.loading = false
                 state.error = action.error
             })
+
+            .addCase(getAllProviders.pending, (state, action) => {
+                state.loading = true
+            })
+            .addCase(getAllProviders.fulfilled, (state, action) => {
+                state.loading = false
+                state.listProviders = action.payload
+            })
+            .addCase(getAllProviders.rejected, (state, action) => {
+                state.loading = false
+                state.error = action.error
+            })
+
+            .addCase(getProvidersByStatus.pending, (state, action) => {
+                state.loading = true
+            })
+            .addCase(getProvidersByStatus.fulfilled, (state, action) => {
+                state.loading = false
+                state.listProviders = action.payload
+            })
+            .addCase(getProvidersByStatus.rejected, (state, action) => {
+                state.loading = false
+                state.error = action.error
+            })
+
+            .addCase(resolveProviderSignup.pending, (state, action) => {
+                state.loading = true
+            })
+            .addCase(resolveProviderSignup.fulfilled, (state, action) => {
+                state.loading = false
+            })
+            .addCase(resolveProviderSignup.rejected, (state, action) => {
+                state.loading = false
+                state.error = action.error
+            })
+
+
     }
 })
 

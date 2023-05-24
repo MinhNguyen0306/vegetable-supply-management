@@ -1,6 +1,7 @@
 package com.example.vegetablemanagementsupplybackend.Config;
 
 import com.example.vegetablemanagementsupplybackend.Converter.EnumConverter.OrderStatusConverter;
+import com.example.vegetablemanagementsupplybackend.Converter.EnumConverter.ProviderStatusConverter;
 import com.example.vegetablemanagementsupplybackend.Converter.EnumConverter.VegetableFilterConverter;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
@@ -19,5 +20,6 @@ public class WebMcvConfig implements WebMvcConfigurer {
     public void addFormatters(FormatterRegistry registry) {
         registry.addConverter(new OrderStatusConverter());
         registry.addConverter(new VegetableFilterConverter());
+        registry.addConverter(new ProviderStatusConverter());
     }
 }

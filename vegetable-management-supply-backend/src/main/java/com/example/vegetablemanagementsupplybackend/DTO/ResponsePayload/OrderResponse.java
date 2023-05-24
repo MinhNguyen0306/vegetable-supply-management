@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 public class OrderResponse {
-    List<OrderDto> orderDtoList;
+    List<OrderDto> content;
     private int pageNumber;
     private int pageSize;
     private long totalElements;

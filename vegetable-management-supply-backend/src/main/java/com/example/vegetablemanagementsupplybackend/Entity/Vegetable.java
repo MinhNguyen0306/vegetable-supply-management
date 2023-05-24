@@ -20,6 +20,7 @@ import java.util.Set;
 @Data
 @NoArgsConstructor @AllArgsConstructor
 @JsonIdentityInfo(
+    scope = Vegetable.class,
     generator = ObjectIdGenerators.PropertyGenerator.class,
     property = "id"
 )
@@ -27,7 +28,7 @@ public class Vegetable {
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID",strategy = "org.hibernate.id.UUIDHexGenerator")
-    @Column(name = "id", unique = true)
+    @Column(name = "id_vegetable", unique = true)
     private String id;
 
     private String vegetableName;

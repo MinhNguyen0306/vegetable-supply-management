@@ -18,6 +18,8 @@ import ProtectedRoute from "./ProtectedRoute";
 import UnauthorizePage from "src/pages/UnauthorizePage";
 import ProviderAccountPage from "src/pages/provider/ProviderAccountPage";
 import OrderDetailPage from "src/pages/provider/OrderDetailPage";
+import AdminOrderPage from "src/pages/admin/AdminOrderPage";
+import ProtectedRouteAdmin from "./ProtectedRouteAdmin";
 
 interface IRouteType {
     auth?: boolean;
@@ -89,13 +91,24 @@ const routes: IRouteType[] = [
         element: <ContractPage />
     },
     {
-        path: "/admin/providers",
-        element: <AdminHomePage />,
+        path: "/admin/providers/:pathVariable",
+        element: 
+            <ProtectedRouteAdmin allowedRoles={[ ROLES.ADMIN ]}>
+                <AdminHomePage />
+            </ProtectedRouteAdmin>,
         layout: <AdminLayout />
     },
     {
         path: "/admin/statistical",
         element: <AdminStatisticalPage />,
+        layout: <AdminLayout />
+    },
+    {
+        path: "/admin/orders",
+        element: 
+            <ProtectedRouteAdmin allowedRoles={[ ROLES.ADMIN ]}>
+                <AdminOrderPage />
+            </ProtectedRouteAdmin>,
         layout: <AdminLayout />
     },
     {

@@ -36,10 +36,10 @@ public class OrderController {
             @RequestParam(value = "sortDir", defaultValue = AppConstants.SORT_DIR, required = false) String sortDir
     ) {
         OrderResponse response = this.orderService.getAllOrder(pageNumber, pageSize, sortBy, sortDir);
-        if(response.getOrderDtoList().isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        if(response.getContent().isEmpty()) {
+            return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
         }
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/")
@@ -62,7 +62,7 @@ public class OrderController {
             @RequestParam(value = "sortDir", defaultValue = AppConstants.SORT_DIR, required = false) String sortDir
     ) {
         OrderResponse response = this.orderService.filterOrderByStatus(orderStatusEnum, pageNumber, pageSize, sortBy, sortDir);
-        if(response.getOrderDtoList().isEmpty()) {
+        if(response.getContent().isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity<>(HttpStatus.OK);
@@ -113,7 +113,7 @@ public class OrderController {
             @RequestParam(value = "sortDir", defaultValue = AppConstants.SORT_DIR, required = false) String sortDir
     ) {
         OrderResponse response = this.orderService.filterOrderMartByStatus(martId, orderStatusEnum, pageNumber, pageSize, sortBy, sortDir);
-        if(response.getOrderDtoList().isEmpty()) {
+        if(response.getContent().isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity<>(HttpStatus.OK);
@@ -144,12 +144,12 @@ public class OrderController {
             ),
             @ApiResponse(responseCode = "404", description = "Order not found"),
     })
-    public ResponseEntity<ChangeStatusResponse> resolveOrder(
+    public ResponseEntity<OrderDto> resolveOrder(
             @PathVariable String orderId,
             @RequestParam("status") OrderStatusEnum typeResolve
     ) {
-        ChangeStatusResponse response = this.orderService.resolveOrder(orderId, typeResolve);
-        if(response.getMessage().equals("failed")) {
+        OrderDto response = this.orderService.resolveOrder(orderId, typeResolve);
+        if(response.getOrderStatus().equals(OrderStatusEnum.PENDING)) {
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(response, HttpStatus.OK);

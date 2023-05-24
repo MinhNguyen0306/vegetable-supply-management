@@ -1,10 +1,12 @@
+import { Provider } from "src/types/provider";
 import { User } from "src/types/user";
 
 interface UserSlice {
     loading: boolean,
     error: any
     user: User | null,
-    isAuthenticated: boolean
+    isAuthenticated: boolean,
+    listProviders: Provider[]
 }
 
 const initialState: UserSlice = {
@@ -35,6 +37,7 @@ const initialState: UserSlice = {
             }
         ]
     },
+    listProviders: [],
     isAuthenticated: false
 }
 

@@ -10,6 +10,7 @@ interface Props {
   errors?: boolean | undefined;
   helperText?: string | false | undefined;
   onChange?: (e: any) => void
+  value?: any
 }
 
 const FormInput = (props: Props) => {
@@ -17,6 +18,7 @@ const FormInput = (props: Props) => {
     id,
     name, 
     placeholder, 
+    value,
     rounded,
     type,
     size,
@@ -45,6 +47,7 @@ const FormInput = (props: Props) => {
         id={id}
         name={name}
         type={type}
+        value={value}
         placeholder={placeholder}
         onChange={onChange ? (e) => onChange(e) : undefined}
         className={`outline-none border-2 border-gray-200 py-1 px-2 ${roundedType.current} ${helperText && "border-red-500"}`}

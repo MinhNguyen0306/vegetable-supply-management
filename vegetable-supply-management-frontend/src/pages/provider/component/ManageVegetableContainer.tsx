@@ -85,9 +85,8 @@ const ManageVegetableContainer = () => {
             <div className='border-2 border-gray-200 rounded mt-5 mx-5'>
                 <div className='m-0 p-0 bg-gray-200'>
                     <table className='w-full'>
-                        <colgroup span={7}>
+                        <colgroup span={6}>
                             <col width={200}/>
-                            <col width={100}/>
                             <col width={100}/>
                             <col width={100}/>
                             <col width={100}/>
@@ -102,9 +101,6 @@ const ManageVegetableContainer = () => {
                                 </th>
                                 <th className='p-4'>
                                     <span>Danh mục</span>
-                                </th>
-                                <th className='p-4'>
-                                    <span>Đơn vị</span>
                                 </th>
                                 <th className='p-4'>
                                     <span>Giá</span>
@@ -129,9 +125,6 @@ const ManageVegetableContainer = () => {
                                         </td>
                                         <td className='p-4 text-center'>
                                             <span>{data.category.categoryName}</span>
-                                        </td>
-                                        <td className='p-4 text-center'>
-                                            <span>{data.unit?.unitName}</span>
                                         </td>
                                         <td className='p-4 text-center'>
                                             <span>{data.currentPricing}</span>

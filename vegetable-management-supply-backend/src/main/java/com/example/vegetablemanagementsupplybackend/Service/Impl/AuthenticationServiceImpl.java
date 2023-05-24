@@ -115,11 +115,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
             var user = userRepository.findByEmail(request.getUsername())
                     .orElseThrow(() -> new ResourceNotFoundException("User", "email", request.getUsername()));
-//            if(user.getProvider() != null) {
-//                if(!user.getProvider().getStatus().equals(ProviderStatusEnum.ACTIVE)) {
-//                    throw new ResourceNotFoundException("User", "email", request.getUsername());
-//                }
-//            }
+            if(user.getProvider() != null) {
+                if(!user.getProvider().getStatus().equals(ProviderStatusEnum.ACTIVE)) {
+                    throw new ResourceNotFoundException("User", "email", request.getUsername());
+                }
+            }
             var access_token = jwtService.generateToken(user);
             var refresh_token = jwtService.generateRefreshToken(user);
             Map<String, String> tokens = new HashMap<>();

@@ -17,13 +17,7 @@ const Sidebar: React.FC<IProps> = ({ open, refer, toggleSidebar }) => {
     const themeMode = useSelector((state: any) => state.themeMode)
 
     const { pathname } = useLocation();
-    const active = menuConfigs.sidebarProviderNav.findIndex(e => e.path === pathname 
-        || e.children?.findIndex(i => i.path === pathname));
-
-    const onSwitchTheme = () => {
-        const theme = themeMode === 'dark' ? 'dark' : 'light';
-        dispatch(setThemeMode(theme));
-    }
+    const active = menuConfigs. sidebarAdminNav.findIndex(e => e.path === pathname);
 
     return (
         <div ref={refer} className={`${open ? 'block' : 'hidden'} md:block h-screen w-[250px] fixed text-base mt-[56px] 

@@ -9,7 +9,7 @@ public interface OrderService {
     OrderDto getOrderById(String orderId);
     OrderResponse getAllOrder(Integer pageNumber, Integer pageSize, String sortBy, String sortDir);
     OrderDto createOrder(String martId, OrderDto orderDto);
-    ChangeStatusResponse resolveOrder(String orderId, OrderStatusEnum typeResolve);
+    OrderDto resolveOrder(String orderId, OrderStatusEnum typeResolve);
     ChangeStatusResponse cancelOrder(String orderId);
     ChangeStatusResponse doneOrderByProvider(String providerId, String orderId);
     OrderDto updateOrder(String orderId);

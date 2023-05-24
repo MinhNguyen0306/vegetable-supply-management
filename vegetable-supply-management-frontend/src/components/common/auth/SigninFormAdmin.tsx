@@ -44,7 +44,7 @@ const SigninFormAdmin = () => {
         signinFormAdminValidate.resetForm()
         dispatch(setSuccessMessage("Đăng nhập Admin thành công"))
         dispatch(setUser(promise.response))
-        navigate("/admin/providers")
+        navigate("/admin/providers/all")
       }
 
       if(promise.error) {

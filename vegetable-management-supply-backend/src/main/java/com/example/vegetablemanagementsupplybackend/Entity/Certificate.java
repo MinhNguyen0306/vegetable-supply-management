@@ -21,6 +21,7 @@ import java.util.Set;
 @Data
 @NoArgsConstructor @AllArgsConstructor
 @JsonIdentityInfo(
+    scope = Certificate.class,
     generator = ObjectIdGenerators.PropertyGenerator.class,
     property = "id"
 )
