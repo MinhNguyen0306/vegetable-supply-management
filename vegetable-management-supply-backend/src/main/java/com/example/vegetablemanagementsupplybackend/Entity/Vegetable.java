@@ -28,7 +28,7 @@ public class Vegetable {
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID",strategy = "org.hibernate.id.UUIDHexGenerator")
-    @Column(name = "id_vegetable", unique = true)
+    @Column(name = "id_vegetable")
     private String id;
 
     private String vegetableName;

@@ -128,10 +128,6 @@ const orderSlice = createSlice({
             })
             .addCase(resolveOrder.fulfilled, (state, action) => {
                 state.loading = false
-                const item = state.listOrder.content.indexOf(action.payload)
-                if(item) {
-                    state.listOrder.content[item] = action.payload
-                }
             })
             .addCase(resolveOrder.rejected, (state, action) => {
                 state.loading = false

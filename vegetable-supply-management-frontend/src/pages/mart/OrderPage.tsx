@@ -34,7 +34,7 @@ const OrderPage = () => {
   const [certificate, setCertificate] = React.useState<any>();
   const [price, setPrice] = React.useState<any>();
   const [pageNumber, setPageNumber] = React.useState<number>(0);
-  const [pageSize, setPageSize] = React.useState<number>(4);
+  const [pageSize, setPageSize] = React.useState<number>(6);
 
   const handleDropdownSearchAdvanced = () => {
     setIsDropdownSearchAdvanced()

@@ -10,5 +10,4 @@ public interface ProviderService {
     List<ProviderDto> getAllProvider();
     List<ProviderDto> getProvidesByStatus(ProviderStatusEnum status);
     ProviderDto getProviderById(String providerId);
-
 }

@@ -73,6 +73,7 @@ const AdminOrderPage = () => {
   const [pageSize, setPageSize] = React.useState<number>(4);
   const [sortBy, setSortBy] = React.useState<SortBy>(optionFilter[0]);
   const [sortDir, setSortDir] = React.useState<string>('asc');
+  const [request, setRequest] = React.useState<boolean>(false);
 
   const listOrder = useSelector((state: RootState) => state.order.listOrder);
   console.log(listOrder)
@@ -82,12 +83,18 @@ const AdminOrderPage = () => {
     navigate(`${order.id}`)
   }
 
-  function handleAccepOrder(order: OrderDetail) {
-    dispatchThunk(resolveOrder({ orderId: order.id, typeResolve: 'RESOLVE' }))
+  async function handleAccepOrder(order: OrderDetail) {
+    const pageRequest: PageRequest = { pageNumber: pageNumber, pageSize: pageSize, sortBy: sortBy?.value, sortDir: sortDir }
+    setRequest(true)
+    await dispatchThunk(resolveOrder({ orderId: order.id, typeResolve: 'RESOLVE' }))
+    setRequest(false)
   }
 
-  function handleRejectOrder(order: OrderDetail) {
-    dispatchThunk(resolveOrder({ orderId: order.id, typeResolve: 'REJECT' }))
+  async function handleRejectOrder(order: OrderDetail) {
+    setRequest(true)
+    const pageRequest: PageRequest = { pageNumber: pageNumber, pageSize: pageSize, sortBy: sortBy?.value, sortDir: sortDir }
+    await dispatchThunk(resolveOrder({ orderId: order.id, typeResolve: 'REJECT' }))
+    setRequest(false)
   }
 
   React.useEffect(() => {

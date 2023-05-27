@@ -16,7 +16,7 @@ const orderStatusProvider = [
 ]
 
 const headerTab: string[] = [
-  "Mã đơn hàng", "Mã khách hàng", "Tên khách hàng", "Ngày đặt", "Thời gian nhận", "", "Thao tác"
+  "Mã đơn hàng", "Tên khách hàng", "Ngày đặt", "Thời gian nhận", "Trạng thái", "", "Thao tác"
 ]
 
 const orderData: any[] = [
@@ -137,23 +137,23 @@ const ProviderOrderPage = () => {
           {/* Content Section */}
           <div className='flex flex-col gap-3'>
             {
-              orderData.map((data, index) =>
+              listOrder.content.map((data, index) =>
               (
                 <div key={index} className='w-full h-[50px] grid grid-cols-7 rounded border-2 border-gray-300 bg-white'>
                   <div className='flex items-center justify-center px-2'>
-                    <span>{ data.id }</span>
+                    <span>{ data.id.slice(0, 8) }</span>
                   </div>
                   <div className='flex items-center justify-center px-2'>
-                    <span>{ data.mart }</span>
+                    <span>{ data.mart.martName }</span>
+                  </div>
+                  <div className='flex items-center justify-center px-2 text-gray-500'>
+                    <span>{ new Date(data.orderDate).toISOString() }</span>
+                  </div>
+                  <div className='flex items-center justify-center px-2 text-gray-500'>
+                    <span>{ new Date(data.deliveryDate).toISOString() }</span>
                   </div>
                   <div className='flex items-center justify-center px-2'>
-                    <span>{ data.name }</span>
-                  </div>
-                  <div className='flex items-center justify-center px-2 text-gray-500'>
-                    <span>{ data.orderDate }</span>
-                  </div>
-                  <div className='flex items-center justify-center px-2 text-gray-500'>
-                    <span>{ data.deliveryDate }</span>
+                    <span>{ data.orderStatus }</span>
                   </div>
                   <div className='flex items-center justify-center px-2 text-gray-500'>
                     <span

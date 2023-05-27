@@ -78,7 +78,7 @@ const sidebarAdminNav: ISidebar[] = [
     {
         icon: <BiUser className="sidebar-item-icon"/>,
         title: "Quản lý nhà cung cấp",
-        path: "/admin/providers"
+        path: "/admin/providers/all"
     }, 
     {
         icon: <AiOutlineTransaction className="sidebar-item-icon"/>,

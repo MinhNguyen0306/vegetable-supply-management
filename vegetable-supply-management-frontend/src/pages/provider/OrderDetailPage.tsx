@@ -15,6 +15,8 @@ const OrderDetailPage = () => {
 
     const orderDetail = useSelector((state: RootState) => state.order.orderDetail)
 
+    console.log(orderDetail)
+
     React.useEffect(() => {
         if(orderId) {
             const orderDetailPromise = dispatchThunk(getOrderById(orderId));
@@ -63,85 +65,43 @@ const OrderDetailPage = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr className='border-b border-b-gray-300'>
-                                    <td width="35%" className='py-2 px-1 text-center'>
-                                        <div className='flex items-center justify-center'>
-                                            <img src={Images.CAROT} alt='' className='w-[50px] h-[50px]' />
-                                            <span>Ten san pham</span>
-                                        </div>
-                                    </td>
-                                    <td width="10%" className='py-2 px-1 text-center'>
-                                        <span>50000</span>
-                                    </td>
-                                    <td width="25%" className='py-2 px-1 text-center'>
-                                        <span>2000g/bo</span>
-                                    </td>
-                                    <td width="10%" className='py-2 px-1 text-center'>
-                                        <span>50</span>
-                                    </td>
-                                    <td width="20%" className='py-2 px-1 text-center'>
-                                        <span className='flex items-center justify-center'>
-                                            <span>10000</span>
-                                            <TbCurrencyDong />
-                                        </span>
-                                    </td>
-                                </tr>
-                                <tr className='border-b border-b-gray-300'>
-                                    <td width="35%" className='py-2 px-1 text-center'>
-                                        <div className='flex items-center justify-center'>
-                                            <img src={Images.CAROT} alt='' className='w-[50px] h-[50px]' />
-                                            <span>Ten san pham</span>
-                                        </div>
-                                    </td>
-                                    <td width="10%" className='py-2 px-1 text-center'>
-                                        <span>50000</span>
-                                    </td>
-                                    <td width="25%" className='py-2 px-1 text-center'>
-                                        <span>2000g/bo</span>
-                                    </td>
-                                    <td width="10%" className='py-2 px-1 text-center'>
-                                        <span>50</span>
-                                    </td>
-                                    <td width="20%" className='py-2 px-1 text-center'>
-                                        <span className='flex items-center justify-center'>
-                                            <span>10000</span>
-                                            <TbCurrencyDong />
-                                        </span>
-                                    </td>
-                                </tr>
-                                <tr className='border-b border-b-gray-300'>
-                                    <td width="35%" className='py-2 px-1 text-center'>
-                                        <div className='flex items-center justify-center'>
-                                            <img src={Images.CAROT} alt='' className='w-[50px] h-[50px]' />
-                                            <span>Ten san pham</span>
-                                        </div>
-                                    </td>
-                                    <td width="10%" className='py-2 px-1 text-center'>
-                                        <span>50000</span>
-                                    </td>
-                                    <td width="25%" className='py-2 px-1 text-center'>
-                                        <span>2000g/bo</span>
-                                    </td>
-                                    <td width="10%" className='py-2 px-1 text-center'>
-                                        <span>50</span>
-                                    </td>
-                                    <td width="20%" className='py-2 px-1 text-center'>
-                                        <span className='flex items-center justify-center'>
-                                            <span>10000</span>
-                                            <TbCurrencyDong />
-                                        </span>
-                                    </td>
-                                </tr>
+                               {
+                                    orderDetail.orderItems.map((item, index) => (
+                                        <tr key={index} className='border-b border-b-gray-300'>
+                                            <td width="35%" className='py-2 px-1 text-center'>
+                                                <div className='flex items-center justify-center'>
+                                                    <img src={Images.CAROT} alt='' className='w-[50px] h-[50px]' />
+                                                    <span>{ item.vegetable.vegetableName }</span>
+                                                </div>
+                                            </td>
+                                            <td width="10%" className='py-2 px-1 text-center'>
+                                                <span>{ item.vegetable.currentPricing }</span>
+                                            </td>
+                                            <td width="25%" className='py-2 px-1 text-center'>
+                                                <span>{ item.vegetable.units.map(u => u.unitName) }</span>
+                                            </td>
+                                            <td width="10%" className='py-2 px-1 text-center'>
+                                                <span>{ item.quantity }</span>
+                                            </td>
+                                            <td width="20%" className='py-2 px-1 text-center'>
+                                                <span className='flex items-center justify-center'>
+                                                    <span>{item.quantity * item.vegetable.currentPricing}</span>
+                                                    <TbCurrencyDong />
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    ))
+                               }
                             </tbody>
                         </table>
                         <div className='flex flex-col w-1/2'>
                             <div className='flex justify-between items-center gap-5'>
-                                <span>Tổng số sản phẩm </span>
-                                <span>15</span>
+                                <span>Tổng sản phẩm </span>
+                                <span>{ orderDetail.orderItems.length }</span>
                             </div>
                             <div className='flex justify-between items-center gap-5'>
                                 <span>Giá trị đơn hàng: </span>
-                                <span>50000</span>
+                                <span>{50000}</span>
                             </div>
                             <div className='flex justify-between items-center gap-5'>
                                 <span>Mã đơn: </span>
@@ -164,15 +124,11 @@ const OrderDetailPage = () => {
                                 </div>
                                 <div className='flex justify-between items-center gap-5'>
                                     <span>Ngày đặt: </span>
-                                    <span>{ orderDetail.orderDate }</span>
-                                </div>
-                                <div className='flex justify-between items-center gap-5'>
-                                    <span>Ngày đặt: </span>
-                                    <span>{ orderDetail.orderDate }</span>
+                                    <span>{ new Date(orderDetail.orderDate).toLocaleDateString() }</span>
                                 </div>
                                 <div className='flex justify-between items-center gap-5'>
                                     <span>Ngày giao: </span>
-                                    <span>{ orderDetail.deliveryDate }</span>
+                                    <span>{ new Date(orderDetail.deliveryDate).toLocaleDateString() }</span>
                                 </div>
                                 <div className='flex justify-between items-center gap-5'>
                                     <span>Mô tả: </span>

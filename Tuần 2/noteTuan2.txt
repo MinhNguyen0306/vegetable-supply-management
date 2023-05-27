@@ -1,9 +1,0 @@
--	Doanh nghiệp cung cấp rau
--	Nhân viên quản lý của siêu thị
--	Admin
--	Khách vãng lai
----------------------------------
-thêm use case: đặt hàng, Cung cấp hợp đồng, tham gia hợp đồng,
-cập nhật giá rau theo mùa, gửi minh chứng VSATTP
-
-ý tưởng gửi yêu cầu rau mới: nhân viên siêu thị -> admin -> nhà cung cấp
